@@ -1,0 +1,23 @@
+# 데이터 처리
+pandas
+numpy
+
+# DB 연결
+sqlalchemy
+pymysql
+python-dotenv
+
+# LLM 분류 파이프라인
+anthropic
+tenacity
+tqdm
+
+# 통계 분석 / LLM 정확도 검증
+scipy
+statsmodels
+scikit-learn
+
+# 시각화 / 노트북
+matplotlib
+seaborn
+jupyter

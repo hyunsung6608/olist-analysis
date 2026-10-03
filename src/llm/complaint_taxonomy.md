@@ -1,4 +1,4 @@
-# 불만 유형 분류 체계 (v0.2)
+# 불만 유형 분류 체계 (v0.3)
 
 Olist 리뷰(주로 1~3점)를 불만 유형별로 분류하기 위한 기준 문서.
 LLM 분류 프롬프트와 사람 라벨링이 모두 이 문서를 기준으로 한다.
@@ -9,6 +9,7 @@ LLM 분류 프롬프트와 사람 라벨링이 모두 이 문서를 기준으로
 |---|---|---|
 | v0.1 | 2026-10-03 | 9개 유형(DELAY, NOT_RECEIVED, WRONG_MISSING, DAMAGED, NOT_AS_DESCRIBED, LOW_QUALITY, SERVICE, OTHER, NO_COMPLAINT) 초안. 파일럿 100건 라벨링 |
 | v0.2 | 2026-10-03 | 파일럿 검토 반영. UNCLEAR·SHIPPING_COST 신설(11개 유형). WRONG_MISSING·NOT_AS_DESCRIBED 경계 재정의(주문 선택 vs 광고 표시). 분할 배송은 WRONG_MISSING. DELAY에 '기한 내지만 오래 걸림' 포함. DAMAGED에 사용 흔적 포함·포장 미흡 제외. LOW_QUALITY에 취향·기대 미달 포함. SERVICE를 부가 라벨로 규정. 주 원인 우선순위 규칙 추가. 제목+본문·텍스트 기준 원칙 명시. 유형별 판단 예시 추가 |
+| v0.3 | 2026-10-03 | '경계 판정 규칙' 섹션 추가: WRONG_MISSING vs NOT_AS_DESCRIBED(광고·사진·설명 명시 언급 여부), DAMAGED vs LOW_QUALITY(수령 시점 결함 vs 사용 후 약화), 일부 vs 전체 미수령, 낮은 점수+긍정 텍스트, 포장 미흡. 판단 규칙 3·5와 관련 예시를 이에 맞게 수정. 보완: 규칙 B에 결함 시점 불명 시 DAMAGED 기본값, 규칙 D에 설명 차이를 언급해도 최종적으로 만족·추천하면 NO_COMPLAINT 추가 |
 
 ## 기본 원칙
 
@@ -53,11 +54,23 @@ NOT_RECEIVED > WRONG_MISSING > DAMAGED > NOT_AS_DESCRIBED > LOW_QUALITY > SHIPPI
 
 1. **NOT_RECEIVED vs DELAY**: 리뷰 시점에 못 받았으면 NOT_RECEIVED. 예정일 경과·장기 대기를 언급하면 DELAY를 함께 부여한다. 늦게라도 받았으면 DELAY만 부여한다.
 2. **NOT_RECEIVED vs WRONG_MISSING**: 주문 전체를 못 받았으면 NOT_RECEIVED, 일부만 받았으면(분할 배송 포함) WRONG_MISSING.
-3. **WRONG_MISSING vs NOT_AS_DESCRIBED**: 고객이 주문 시 **고른 것**과 다르면 WRONG_MISSING, 광고·사진에 **표시된 것**과 다르면 NOT_AS_DESCRIBED.
+3. **WRONG_MISSING vs NOT_AS_DESCRIBED**: 아래 경계 판정 규칙 A를 따른다.
 4. **NOT_AS_DESCRIBED vs LOW_QUALITY**: 광고·사진·설명과의 차이를 언급하면 NOT_AS_DESCRIBED, 언급 없이 품질·기대 미달만 말하면 LOW_QUALITY.
-5. **DAMAGED vs LOW_QUALITY**: 특정 개체의 파손·결함·작동 불능이면 DAMAGED, 상품 전반의 품질·내구성 수준이 낮으면 LOW_QUALITY.
+5. **DAMAGED vs LOW_QUALITY**: 아래 경계 판정 규칙 B를 따른다.
 6. **SERVICE**: 환불·교환을 **요구**하는 것만으로는 부여하지 않는다. 응대·처리의 **실패**를 언급할 때 부여한다.
 7. **SHIPPING_COST vs NOT_RECEIVED**: 우체국 등에서 직접 찾아왔다면 결국 받은 것이므로 NOT_RECEIVED가 아니라 SHIPPING_COST.
+
+## 경계 판정 규칙
+
+자주 헷갈리는 경계는 아래 규칙을 우선 적용한다.
+
+| | 경계 | 판정 |
+|---|---|---|
+| A | WRONG_MISSING vs NOT_AS_DESCRIBED | 광고·사진·설명을 **명시적으로 언급**하면 NOT_AS_DESCRIBED, 언급 없이 다른 상품이 왔다고 하면 WRONG_MISSING |
+| B | DAMAGED vs LOW_QUALITY | **받았을 때부터** 결함·작동 불가면 DAMAGED, **사용 후** 약해지거나 망가지면 LOW_QUALITY. 결함이 생긴 시점이 텍스트로 드러나지 않으면 DAMAGED |
+| C | 일부 vs 전체 미수령 | 주문 상품 중 **일부만** 못 받았다고 하면 WRONG_MISSING, **전체**를 못 받았으면 NOT_RECEIVED |
+| D | 낮은 점수 + 긍정 텍스트 | 불만 표현이 없으면 NO_COMPLAINT. 상품 설명과의 차이를 언급해도 최종적으로 만족·추천을 표현하면 NO_COMPLAINT |
+| E | 포장 미흡(손상 없음) | OTHER |
 
 ## 유형별 판단 예시 (파일럿에서 애매했던 사례)
 
@@ -70,18 +83,21 @@ NOT_RECEIVED > WRONG_MISSING > DAMAGED > NOT_AS_DESCRIBED > LOW_QUALITY > SHIPPI
 ### WRONG_MISSING
 - "TV 거치대 2개 주문, 1개만 옴, 두 번째 기다리는 중" → `WRONG_MISSING`. 분할 배송 포함.
 - "두 상품 모두 9/5 도착 예정이었는데 하나만 옴" → `WRONG_MISSING|DELAY`, 주 원인 WRONG_MISSING.
-- "버클까지 올블랙을 샀는데 은색 버클로 옴, 각인 없음" → `WRONG_MISSING|NOT_AS_DESCRIBED`, 주 원인 WRONG_MISSING. 고객이 고른 사양과 다름.
+- "오토바이용을 기다렸는데 자전거용이 옴" → `WRONG_MISSING`. 광고 언급 없음(규칙 A).
 - 제목 "잘못된 상품" + 본문 "메일에 답이 없다" → `WRONG_MISSING|SERVICE`. 제목에서 오배송 확인.
 
 ### DAMAGED
 - "이미 사용한 것 같다, 더럽고 긁혀 있다" → `DAMAGED`. 사용 흔적 포함.
-- "핀으로 찌른 듯한 작은 구멍" → `DAMAGED`. 경미해도 개체 결함.
+- "핀으로 찌른 듯한 작은 구멍" → `DAMAGED`. 경미해도 받았을 때부터 있던 결함.
+- "일부 브러시가 모가 휘거나 마른 채로 왔다" → `DAMAGED`. 수령 시점 결함(규칙 B).
+- "시계 바늘이 부정확하고 조절 버튼이 빠졌다" → `DAMAGED`. 결함 시점이 불명이라 기본값 적용(규칙 B).
 - "늦게 왔고 파손돼 있었다" → `DAMAGED|DELAY`, 주 원인 DAMAGED(우선순위).
 - "새 상품이고 괜찮은데 상자가 밀봉되지 않았다" → DAMAGED 아님. `OTHER`(포장 미흡).
 
 ### NOT_AS_DESCRIBED
 - "광고와 다르게 왔다" → `NOT_AS_DESCRIBED`. 광고를 기준으로 언급.
 - "사진엔 보온병 커버가 있었는데 동봉되지 않았다" → `NOT_AS_DESCRIBED`. 사진 속 구성품 누락.
+- "올블랙 시계를 샀는데 은색 버클로 옴, 사진엔 검은 버클과 각인이 있었다" → `NOT_AS_DESCRIBED`. 사진을 명시적으로 언급(규칙 A).
 - "정품 인형인 줄 알았는데 중국산, 설명에 제조지가 없다" → `NOT_AS_DESCRIBED`. 정보 부족·정품 여부.
 - "엡손 정품이라 했는데 위조품" → `NOT_AS_DESCRIBED`.
 - "배터리 미포함, 영어 매뉴얼, 어떤 배터리를 써야 할지 모름" → `NOT_AS_DESCRIBED`. 상품 정보 부족.
@@ -89,7 +105,7 @@ NOT_RECEIVED > WRONG_MISSING > DAMAGED > NOT_AS_DESCRIBED > LOW_QUALITY > SHIPPI
 ### LOW_QUALITY
 - "상품은 맞게 왔는데 너무 작아서 싫다" (설명 언급 없음) → `LOW_QUALITY`. 기대 미달.
 - "향이 너무 달다" → `LOW_QUALITY`. 취향 불만.
-- "자석이 약해 일주일 만에 안 닫힘, 실이 풀림" → `LOW_QUALITY`. 상품 전반의 내구성.
+- "자석이 약해 일주일 만에 안 닫힘, 실이 풀림" → `LOW_QUALITY`. 사용 후 약해짐(규칙 B).
 - "광고를 잘 안 봤는데 소재가 마음에 안 든다" → `LOW_QUALITY`. 고객이 광고 미확인을 인정.
 
 ### SHIPPING_COST
@@ -114,3 +130,4 @@ NOT_RECEIVED > WRONG_MISSING > DAMAGED > NOT_AS_DESCRIBED > LOW_QUALITY > SHIPPI
 
 ### NO_COMPLAINT
 - 2점인데 "아주 좋아요" → `NO_COMPLAINT`. 텍스트 기준.
+- 2점, "사이트에서는 달라 보여 더 클 줄 알았지만 만족, 강력 추천" → `NO_COMPLAINT`. 설명 차이를 언급했지만 최종적으로 만족·추천(규칙 D).

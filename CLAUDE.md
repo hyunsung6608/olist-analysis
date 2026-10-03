@@ -27,7 +27,7 @@ LLM으로 리뷰를 불만 유형별로 분류하고, 배송·판매자·재구�
 - notebooks: 탐색적 분석, 시각화
 
 ## 기술 스택
-Python(venv), pandas, MySQL(SQLAlchemy + PyMySQL), Anthropic API, scipy/statsmodels, scikit-learn, Tableau
+Python(venv), pandas, MySQL(SQLAlchemy + PyMySQL), Gemini API(google-genai), scipy/statsmodels, scikit-learn, Tableau
 
 ## 코딩 규칙
 - 모든 파일은 UTF-8(BOM 없음)로 저장한다.
@@ -42,7 +42,10 @@ Python(venv), pandas, MySQL(SQLAlchemy + PyMySQL), Anthropic API, scipy/statsmod
 - 전체 실행 전에 반드시 소량 샘플(50건 내외)로 먼저 테스트한다.
 - 전체 실행 전 예상 호출 건수와 대략적인 비용을 먼저 알려준다.
 - 이미 분류된 리뷰는 건너뛴다(캐싱). 실패 시 tenacity로 재시도한다.
-- 분류 결과는 MySQL 테이블에 저장한다.
+- 분류 결과는 data/processed에 JSONL로 저장하고(리뷰 1건당 1줄, 중단 후 이어서 실행 가능), MySQL 적재는 ETL 단계에서 한다.
+- 분류 모델은 Gemini Flash 계열을 무료 사용량 안에서 사용하고, 모델 이름은 .env의 GEMINI_MODEL에서 읽는다.
+- 무료 사용량의 호출 제한을 지키도록 요청 간격을 두고, 제한 초과 에러가 나면 기다렸다가 재시도한다.
+- 모델 호출 부분은 함수로 분리해서 나중에 다른 모델(Claude, 로컬 모델)로 쉽게 바꿀 수 있게 한다.
 
 ## 작업 방식
 - 한 번에 한 단계씩 진행한다. 큰 작업은 먼저 계획을 설명하고 확인받은 뒤 진행한다.

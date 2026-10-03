@@ -31,6 +31,7 @@ Python(venv), pandas, MySQL(SQLAlchemy + PyMySQL), Anthropic API, scipy/statsmod
 
 ## 코딩 규칙
 - 모든 파일은 UTF-8(BOM 없음)로 저장한다.
+- 단, 사람이 엑셀로 열어볼 CSV(라벨링 파일 등)는 encoding="utf-8-sig"로 저장한다.
 - 파일 입출력 시 encoding="utf-8"을 명시한다.
 - MySQL 연결은 charset=utf8mb4를 사용하고, 테이블도 utf8mb4로 생성한다.
 - DB 접속정보와 API 키는 .env에서 python-dotenv로 읽는다. 코드에 하드코딩하지 않는다.

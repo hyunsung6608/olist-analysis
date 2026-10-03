@@ -1,0 +1,122 @@
+﻿review_id,review_score,review_comment_title,review_comment_message,translation_ko,labels,primary_label,confidence,note
+818cc86c594c62eaf1427838c6e23b0e,1,,Estou aguardando a entrega pois até o dia de hj não veio .não posso avaliar se encomendara a loja pois eu rastriei o produto e diz que a entrega é pelo correio e estava em transporte ,오늘까지 오지 않아 배송을 기다리는 중입니다. 추적해 보니 우체국 배송이고 운송 중이라고 나와서 이 가게에서 또 주문할지 평가할 수 없습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+09b23ea309a83c0f0c402cfaeaaf7d6a,1,Ainda não chegou',"Até hoje, 17/05/2018 ainda não recebi o produto, não consta nem a chegada a minha cidade. O pedido foi feito em 02/04/2018",오늘(2018/05/17)까지 상품을 받지 못했고 우리 도시에 도착했다는 기록도 없습니다. 주문은 2018/04/02에 했습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,주문 후 6주 경과 명시 → DELAY 동시 부여
+f36b99ffbceabeb3a52181492353ee4b,1,,Falta receber o protetor de porta e os jogos de cama de solteiro,문 보호대와 싱글 침구 세트를 아직 받지 못했습니다.,WRONG_MISSING,WRONG_MISSING,medium,'Falta receber'가 주문 일부 누락인지 전체 미수령인지 불명확
+ae7b9d753d8f1b80b90c883fbf899d15,1,,Comprei um relógio branco me mandaram preto,흰색 시계를 샀는데 검은색을 보냈습니다.,WRONG_MISSING,WRONG_MISSING,high,
+f3c6e7d738482de2b650baf678759d11,1,não recebimento,Até o momento não houve o recebimento do produto,현재까지 상품을 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+8240e1b32761dd226e5d63dbee7fa6ce,1,,"Fiz a compra pensando que era bonecos originais e pra minha surpresa era da China,não gostei e quero a troca ou dinheiro de volta não descrição não diz a fabricação do brinquedo",정품 인형인 줄 알고 샀는데 중국산이었습니다. 마음에 들지 않으니 교환이나 환불을 원합니다. 설명에 제조지가 나와 있지 않았습니다.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,high,v0.2: 정보 부족·정품 여부를 NAD에 포함하도록 규정
+9a8df2e4464fb7a7de8e3e344ea2926b,1,Horrível!!,"Produto de péssima qualidade, nada haver com a foto. A saia não é reta igual na foto, fica cheia de pregas. Não compram, só queria o meu dinheiro de volta!!!","품질이 최악이고 사진과 전혀 다릅니다. 치마가 사진처럼 일자가 아니고 주름투성이입니다. 사지 마세요, 돈만 돌려받고 싶어요!!!",NOT_AS_DESCRIBED|LOW_QUALITY,NOT_AS_DESCRIBED,high,사진 불일치+품질 불만. 우선순위로 NAD
+2e6ec612df2ad503c839b73a704566cf,1,,Ouve um problema e a entrega não foi realizada quero o reembolso,문제가 생겨 배송이 되지 않았습니다. 환불을 원합니다.,NOT_RECEIVED,NOT_RECEIVED,high,환불 요구만 있어 SERVICE 미부여
+5d2e4b2e1347683843d8da6af8ef4c6f,1,,Comprei duas bolsas mais só recebi 1.... tive problema com a entrega mandei vários e-mails e não recebi nenhuma resposta. Estou muito insatisfeita ,가방 2개를 샀는데 1개만 받았습니다. 배송 문제로 이메일을 여러 번 보냈지만 답을 받지 못했습니다. 매우 불만족스럽습니다.,WRONG_MISSING|SERVICE,WRONG_MISSING,high,
+bc0dbb89e5291ab0148b18f5abd3987b,1,,Não recebi o produto nem satisfação da empresa quanto ao ocorrido. ,상품을 받지 못했고 업체에서 무슨 일인지 설명도 없었습니다.,NOT_RECEIVED|SERVICE,NOT_RECEIVED,high,
+9aa8d732bbb721f34fb279ba1e81b67b,1,,Até o momento não recebi o produto pago ,결제한 상품을 아직까지 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+ef87de41e52daba534528819c6db7957,1,,"Comprei o produto há quase um mês, o pacote teria sido postado no dia 01/02/2018, mas até agora não o recebi.",거의 한 달 전에 샀고 2018/02/01에 발송됐다는데 아직 받지 못했습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,
+7081f72209330c5ce5ffdcdcb59208aa,1,,Até o presente momento o produto não foi entregue,현재까지 상품이 배송되지 않았습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+c33eebba04254309536b77c05a32b429,1,O produto veio errado,Produto veio errado e com um pedacinho do pano rasgado,상품이 잘못 왔고 천이 조금 찢어져 있었습니다.,WRONG_MISSING|DAMAGED,WRONG_MISSING,medium,'veio errado'가 다른 상품이 왔다는 뜻인지 결함 있는 상품이라는 뜻인지 불명확
+9980f3a5664ad72cfe3d078359078397,1,,Não recebi o produto...Não fui orientado....Não me ligaram....Estou muito puto!,상품을 받지 못했습니다... 안내도 없었고... 전화도 없었습니다... 정말 화가 납니다!,NOT_RECEIVED|SERVICE,NOT_RECEIVED,high,
+58dde20c53f73a1828b17d98e4d80a11,1,Tinta não é original,"Não recomendo a loja, estão anunciando tinta original Epson e não é. Uma falsificação quase perfeita. Revoltado devido a tentativa de ludibriar o consumidor. ",이 가게 추천하지 않습니다. 엡손 정품 잉크라고 광고했는데 아닙니다. 거의 완벽한 위조품입니다. 소비자를 속이려 해서 화가 납니다.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,high,위조품·정품 아님 — 별도 유형 후보
+0d9d92adaf307d05e2a54228263baaeb,1,,Quero devolver pois recebi algo que não pedi ,주문하지 않은 것을 받아서 반품하고 싶습니다.,WRONG_MISSING,WRONG_MISSING,high,
+2c60b4fcd6555e20d6edf6f982ae2415,1,Demora na entrega,"São muitos enrolados para fazer a entrega do produto, até agora não recebi o produto.",배송을 너무 질질 끕니다. 아직도 상품을 받지 못했습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,medium,제목은 '배송 지연'인데 본문은 미수령. 고객 인식(지연)과 상태(미수령)가 다름
+68943d08a20deb9b08c7de80a0927214,1,,"Produto veio correto, só achei muito pequeno. Não gostei por isso. Mas produto foi entregue no prazo tudo certinho. ",상품은 제대로 왔는데 너무 작아서 마음에 들지 않았습니다. 그래도 배송은 기한 내에 잘 왔습니다.,LOW_QUALITY,LOW_QUALITY,medium,v0.2: 기대 미달을 LOW_QUALITY에 포함. 다만 1점 대비 텍스트가 온건
+80bda512d899e7faa3a7a8451d601f35,1,Nao recebido produto ,Sem o produto nao recebido ,상품을 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+7e0f1dbfe47241f795a87b8608543ab1,1,,O produto não foi entregue. Nem se quer chegou em casa. ,상품이 배송되지 않았습니다. 집에 오지도 않았어요.,NOT_RECEIVED,NOT_RECEIVED,high,
+b2c87db966cf97ccc4f7528b239c3c1b,1,,meu produto era pra ser entregue dia 06/03/2018 e ate agora nada ,2018/03/06에 배송됐어야 하는데 아직까지 아무것도 없습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,
+276bdab790a7dd1a0a938e154de1b420,1,,"Foram pedidos 2(dois) suportes para duas TVs e somente veio 1(um).
+Aguardo o segundo suporte.
+",TV 2대용 거치대 2개를 주문했는데 1개만 왔습니다. 두 번째 거치대를 기다리고 있습니다.,WRONG_MISSING,WRONG_MISSING,high,v0.2: 분할 배송(일부 대기 중)은 WRONG_MISSING
+68f42cd6a219b4b9a495360329a01c6d,1,Não recomendo,Recebi a mascara mas de outra cor. Infelizmente não pude fazer a troca pois já tinha jogado a nota fiscal fora,마스크를 받았는데 다른 색이었습니다. 영수증을 이미 버려서 교환할 수 없었습니다.,WRONG_MISSING,WRONG_MISSING,high,교환 불가는 고객 사정이라 SERVICE 미부여
+f774cb6dcf0a189de2c8935a9999e86f,1,,Comprei há maia de 20 dias e não recebi produto e tão pouco me deram alguma satisfação. Já reclamei com as lojas lannister mas até agora ninguém me deu uma posição. UM ABSURDOOO!!!,20일도 더 전에 샀는데 상품을 받지 못했고 아무 설명도 없었습니다. 가게에 항의했지만 아직 아무도 답을 주지 않았습니다. 정말 어이없습니다!!!,NOT_RECEIVED|DELAY|SERVICE,NOT_RECEIVED,high,
+455f26b52082ed8134384a049d394441,1,,"Não entregou o produto, confiou aos correios e não fez nenhum contato para saber da situação...","상품을 배송하지 않았고, 우체국에 맡긴 뒤 상황을 확인하려는 연락도 없었습니다...",NOT_RECEIVED|SERVICE,NOT_RECEIVED,high,
+32247878e34bd6e8d7dbf7b31a4ae0b0,1,,Meu produto não foi entregue até o momento!,제 상품이 아직 배송되지 않았습니다!,NOT_RECEIVED,NOT_RECEIVED,high,
+4666b63a58431ce9a3a21341ec6fa6fb,1,,nao quero falar nada,아무 말도 하고 싶지 않습니다.,UNCLEAR,UNCLEAR,high,의미 없는 텍스트
+0e249472bec47b0c4b88a8e8bfa8d241,1,,Deveriam contratar transportadora e não correio até o momento não recebi minha encomenda ,우체국 말고 택배사를 써야 합니다. 아직 주문한 물건을 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,운송 수단(우체국) 불만은 부가 의견으로 봄
+5ad171e2befd146aac220f83acc3e019,1,,Nao recomendo comprei uma cortina é veio só as varetas de colocar as cortinas,추천하지 않습니다. 커튼을 샀는데 커튼 봉만 왔습니다.,WRONG_MISSING,WRONG_MISSING,high,
+b6acb139437f17b1f3d1153eea3b69c3,1,,Data de entrega era dia 27/03 e ate hoje não recebi nada.,배송일이 3/27이었는데 오늘까지 아무것도 받지 못했습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,
+702651556ae0188de7bf6ba84ddc54d2,1,,"Estou ha mais de 1 mes esperando meu produto, e se quer tem um número pra falar com um atendente das lannister!! Só gravação 
+NUNCA MAIS",한 달 넘게 상품을 기다리고 있는데 상담원과 통화할 번호도 없고 자동 녹음만 나옵니다!! 다시는 안 삽니다.,NOT_RECEIVED|DELAY|SERVICE,NOT_RECEIVED,high,
+529b6c617623b1d7c6a580bf65013045,1,,"Não recebí o produto, e mesmo tendo comunicado ao baratheon o que ocorreu me recomendaram aguardar 02 dias que a loja me contataria e isso não aconteceu. Exijo uma solução imediata.",상품을 받지 못했습니다. 플랫폼에 알렸더니 이틀 기다리면 가게에서 연락할 거라고 했는데 연락이 없었습니다. 즉시 해결을 요구합니다.,NOT_RECEIVED|SERVICE,NOT_RECEIVED,high,
+2ab74273b890cbfd1e4d60a5a0651c45,1,,Recebi somente uma unidade e paguei duas.,2개 값을 냈는데 1개만 받았습니다.,WRONG_MISSING,WRONG_MISSING,high,
+cd5eb3f8c8faeb7a89b1e8b3120fe206,1,,Faltou um pedido na entrega e quando pede para cancelar um produto não te atendem,"주문 하나가 배송에서 빠졌고, 상품 취소를 요청해도 응대하지 않습니다.",WRONG_MISSING|SERVICE,WRONG_MISSING,high,
+e6acae33a98861be63cf635525330891,1,,As lentes estao com defeito nao sei se a cx toda,렌즈에 결함이 있습니다. 박스 전체가 그런지는 모르겠습니다.,DAMAGED,DAMAGED,high,
+268eb5c58f1fa85472f94c2f295c2a91,1,,Eu recebi um produto! E como descrito na nota eu paguei por 2 produtos ,상품을 1개 받았습니다! 영수증에 적힌 대로 저는 2개 값을 냈습니다.,WRONG_MISSING,WRONG_MISSING,high,
+ba5d32db98e447802513ec268c0d1b9c,1,BOM,PRODUTO PARECE QUE JA FOI UTILIZADO FEIO TUDO SUJO E RISCADO,상품이 이미 사용한 것 같습니다. 볼품없고 전부 더럽고 긁혀 있습니다.,DAMAGED,DAMAGED,high,v0.2: 사용 흔적(중고 의심)은 DAMAGED. 제목 '좋음'은 본문과 반대
+6a097d332c73133f95dc0f13be8c91f5,1,,A EMPRESA FAZ PROPAGANDA ENGANOSA EM SEU SITE. NÃO RECEBI A MERCADORIA COMPRADA. ESCREVI E-MAIL RECLAMANDO E SEQUER RECEBI UMA RESPOSTA DO MOTIVO DO ATRASO. ESTOU INDIGNADA COM A targaryen E COM A AMERICA,이 업체는 사이트에서 허위 광고를 합니다. 구매한 상품을 받지 못했습니다. 이메일로 항의했지만 지연 사유에 대한 답도 받지 못했습니다. 이 가게와 플랫폼에 분노합니다.,NOT_RECEIVED|DELAY|SERVICE,NOT_RECEIVED,high,'허위 광고'는 배송 약속을 가리키는 것으로 보고 NOT_AS_DESCRIBED 미부여
+a3bc63a62749ade8bbe45ffc57138251,1,,O produto não foi entregue até hoje ,상품이 오늘까지 배송되지 않았습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+d13f126ed378c0ecce5c987b192bdc29,2,,"Tive a impressão de que o produto era maiorla quando estava com ele em mãos pois no site era diferente mas gostei do produto. ..super recomendo essa loja muitos precisos na data da entrega 
+",사이트에서 본 것과 달라서 실물이 더 클 줄 알았지만 상품은 마음에 듭니다. 배송 날짜도 정확해서 이 가게 강력 추천합니다.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,medium,사이트 표시와 크기 차이 → NAD. 텍스트 전반은 긍정이라 NO_COMPLAINT 가능성 남음
+be1b2afd9dc5d5578e556891e6a6ffdf,2,,"Não prestei atenção no anuncio, não gostei do material, sinceramente não compraria novamente.",광고를 주의 깊게 보지 않았습니다. 소재가 마음에 안 들어서 솔직히 다시 사지는 않을 겁니다.,LOW_QUALITY,LOW_QUALITY,high,v0.2: 소재 불호(취향)는 LOW_QUALITY
+09e543d8be5911076628e46bcf674dfb,2,,O produto veio diferente do anuncio,상품이 광고와 다르게 왔습니다.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,medium,v0.2: '광고와 다름' 표현 → NAD. 실제로는 다른 상품 오배송일 가능성 남음
+e9b8f341b27e7accdc85270a9ae00b1f,2,,Não recebi,받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+48656dcc623756f5c68ad3257b9cc1ee,2,,E ainda gastei no correio com embalagem,게다가 포장해서 우체국으로 보내느라 돈까지 썼습니다.,SHIPPING_COST,SHIPPING_COST,low,반품 배송비 부담으로 추정 → SHIPPING_COST. 맥락이 부족해 확신 낮음
+7b50ba7a5dce6830597b7d729b440c9a,2,,"Depois de um longo e árduo tempo, o produto foi entregue. Acho que ele veio de carroça.",길고 힘든 시간 끝에 상품이 배송됐습니다. 마차로 온 것 같아요.,DELAY,DELAY,high,
+a75f894a4aa1656702bb495a128dd790,2,,"Recomendo a loja, porém sempre tem algum ponto à melhorar e a sugestão é p/ logística, pois a compra foi efetuada dia 16/03 e até o momento não foi entregue, ou seja, quase 1 mês e ainda não recebi.",가게는 추천하지만 개선할 점이 있다면 물류입니다. 3/16에 샀는데 거의 한 달이 되도록 배송되지 않았습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,
+afb6b942609ed1033530e06710458bed,2,talvez,"Quanto a compra faltou a opção da fragrância , pois eu tinha interesse era no almíscar, no mais o que veio perde a fixação.","원하던 향(머스크) 옵션이 없었고, 그 외에 받은 것은 지속력이 약합니다.",LOW_QUALITY|OTHER,LOW_QUALITY,medium,향 옵션 부재는 상품 구색 불만 — 해당 유형이 없어 OTHER
+1beb542e12be99601ae98b99b17bebcf,2,Regular.,Mercadoria demorou muito para chegar! E recebi com avarias.,"상품이 오는 데 너무 오래 걸렸고, 파손된 상태로 받았습니다.",DAMAGED|DELAY,DAMAGED,high,v0.2 우선순위로 DAMAGED
+96a20cec700f8a78916f337c0dc591a6,2,Nao era o que eu esperava,"Comprei o relógio todo preto, com fecho preto, porém veio com fecho prata, e comprei com nome MVTM escrito dentro do relógio, veio sem o nome, na foto fecho preto, e com nome MVTM, não veio assim","버클까지 올블랙인 시계를 샀는데 은색 버클로 왔고, 안쪽에 MVTM 이름이 새겨진 걸 샀는데 이름이 없었습니다. 사진에는 검은 버클에 MVTM 각인이 있었는데 그렇게 오지 않았습니다.",WRONG_MISSING|NOT_AS_DESCRIBED,WRONG_MISSING,medium,고객이 고른 사양(올블랙·각인)과 다름 → WRONG_MISSING 주 원인. 선택 가능한 옵션이었는지는 불명
+95fa991599515176d1b8d904136dc980,2,,"Cortina branca, com costura marrom , costuras torta.
+Já comprei cortina nesse valor mais com bom acabamento","흰 커튼에 갈색 바느질, 바느질도 삐뚤어졌습니다. 같은 가격에 마감이 좋은 커튼을 산 적이 있습니다.",LOW_QUALITY,LOW_QUALITY,high,
+ddb3a4c9c0dc5ead130ca903e9806687,2,Recomendo sim,Recebi apenas 1 kit de quadros. Estou aguardando pelo outro kit.,액자 키트를 1개만 받았습니다. 나머지 키트를 기다리고 있습니다.,WRONG_MISSING,WRONG_MISSING,high,v0.2: 분할 배송은 WRONG_MISSING. 제목 '추천'은 긍정
+ce1bdb912329a875e92bcfe8081c283b,2,,"Nem pude testar o produto, nem sei que bateria usá-la, manual em inglês, veio sem bateria, onde adquiri-la?",상품을 테스트도 못 했습니다. 어떤 배터리를 써야 하는지도 모르겠고 매뉴얼은 영어고 배터리도 없이 왔습니다. 어디서 사야 하나요?,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,medium,v0.2: 상품 정보 부족(배터리 규격·영어 매뉴얼) → NAD. 배터리가 원래 구성품인지는 불명
+612201a213fb01d4f977e5711837356b,2,Bom,"Só não gostei das fragrâncias, bem enjoativas e doces.",향만 마음에 안 들었어요. 너무 느끼하고 달아요.,LOW_QUALITY,LOW_QUALITY,high,v0.2: 취향 불만은 LOW_QUALITY
+8937ffc793129f6dc2fe84b03645bfda,2,,Comprei o tapete para presente e infelizmente veio menor do que o anunciado,선물용으로 러그를 샀는데 아쉽게도 광고보다 작게 왔습니다.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,high,
+acf97a6a9e69ba14150422de35fd5afe,2,,"
+
+Pilha Recarregável Kit 4 Pilhas Aaa 2700 Mah 1.2v Ni Mh",충전식 건전지 AAA 4개 키트 2700mAh 1.2V Ni-MH,UNCLEAR,UNCLEAR,high,상품명만 기재
+ff73170d8a9deb95aa4814ddbec217b4,2,,entregou faltando um produto,상품 하나가 빠진 채 배송됐습니다.,WRONG_MISSING,WRONG_MISSING,high,
+31fdd8bc04f5a2e415fa87c12159698d,2,Entrega,Recebi parte da compra. Fsltou a saia matelasada. E não recebi nenhuma informação sobre essa pendência. Aguardo instruções sobre como proceder.,구매품 일부만 받았습니다. 누빔 치마가 빠졌고 이 미배송 건에 대해 아무 안내도 받지 못했습니다. 어떻게 해야 할지 안내를 기다립니다.,WRONG_MISSING|SERVICE,WRONG_MISSING,high,
+bd5b719a13539def7dc1a284845f1fcc,2,,"3
+
+
+
+
+
+
+
+
+
+
+",3,UNCLEAR,UNCLEAR,high,의미 없는 텍스트(숫자)
+4991c3612ddb56bf3c9ec48b1fe46e7b,2,,MUITO BOM ,아주 좋아요,NO_COMPLAINT,NO_COMPLAINT,high,2점이지만 텍스트 기준으로 불만 없음
+3cda01b6a2349ac9c88a9ab410eb2534,2,insatisfeita,"Não considero que recebi o produto exatamente como imaginei, pois na imagem ilustrativa constava uma capa para a garrafa térmica, a qual não acompanhou o produto, não comprei em outra loja mais barata",상품을 상상한 그대로 받았다고 보지 않습니다. 이미지에는 보온병 커버가 있었는데 함께 오지 않았습니다. 더 싼 다른 가게에서 사지 않았는데 말이죠.,NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,high,v0.2: 사진 속 구성품 누락은 NAD
+5ef92067b11aa8f999ace9e9edcda377,2,,Recebi apenas a bolsa a cortina não recebi.,가방만 받았고 커튼은 받지 못했습니다.,WRONG_MISSING,WRONG_MISSING,high,
+58b704fb84caaafe245f49cb9f71a34c,2,Falta um.produto,Não recebi a capa De sofá. Estou aguardando e não estou informada de quando virá,소파 커버를 받지 못했습니다. 기다리고 있는데 언제 올지 안내도 없습니다.,WRONG_MISSING|SERVICE,WRONG_MISSING,high,
+7820e042d799dd69201561dd814ded7c,2,,"Compra de dois produtos com previsão de chegada para ambos em 05/09/2017, porém apenas um produto foi entregue até o momento. Então o Relógio Digital Mormaii Acquarela FZU8C chegou e outro não.",두 상품을 샀고 둘 다 2017/09/05 도착 예정이었는데 지금까지 하나만 배송됐습니다. Mormaii Acquarela FZU8C 디지털 시계는 왔고 다른 하나는 오지 않았습니다.,WRONG_MISSING|DELAY,WRONG_MISSING,high,"v0.2: 분할 배송은 WRONG_MISSING, 예정일 경과로 DELAY"
+ed7d32b26fc37f5954ad82ee7db63ed4,2,,"TAPETE MUITO FINO, E PELOS FINOS",러그가 너무 얇고 털도 가늡니다.,LOW_QUALITY,LOW_QUALITY,high,
+8186bdc146b4f2d9b977c12a9df0fccd,2,Não chegou o produto,"Atraso na entrega(a qual já possuía um prazo mais do que suficiente), logo não consigo avaliá-lo positivamente, muito menos opinar a favor da transportadora.",배송 지연(기한이 이미 충분했는데도)으로 상품을 긍정적으로 평가할 수 없고 운송사를 좋게 말할 수도 없습니다.,NOT_RECEIVED|DELAY,NOT_RECEIVED,high,제목(상품이 오지 않음)+본문(지연)을 함께 보면 미수령
+f042bb5075dfb84954525296fd81b347,2,,Ainda não recebi o produto ,아직 상품을 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+bc2b53da5728cdf44996ccf16bc9f785,2,,Um dos cubos veio danificado(tipo amassado),큐브 하나가 손상돼서(찌그러진 듯) 왔습니다.,DAMAGED,DAMAGED,high,
+db2ad68a772d476d92bae6d8c9a8eb18,2,,"Produto recebido divergente ao comprado, gerando frustração e perda de oferta de outras opções analisadas.",구매한 것과 다른 상품을 받아 실망했고 다른 대안을 놓쳤습니다.,WRONG_MISSING,WRONG_MISSING,high,
+ae780cf5942c31299d7c737468775027,2,,Eu estava esperando um de moto e veio um de bicicleta,오토바이용을 기다렸는데 자전거용이 왔습니다.,WRONG_MISSING,WRONG_MISSING,medium,"오배송인지, 광고가 모호해 고객이 오해한 것(NAD)인지 불명"
+3b832135ecc38433a22f120fbf642c22,3,,"Foi entregue no prazo, mas ainda assim achei que demorou demais. ",기한 내에 배송되긴 했지만 그래도 너무 오래 걸린 것 같습니다.,DELAY,DELAY,high,v0.2: 기한 내지만 오래 걸렸다는 불만도 DELAY
+daf6271596a6c845310b0850b53e45fc,3,,"Imaginei que a madeira fosse um pouco mais grossa, achei muito fininha, mas é lindinha.",나무가 좀 더 두꺼울 줄 알았는데 너무 얇네요. 그래도 예뻐요.,LOW_QUALITY,LOW_QUALITY,high,v0.2: 기대 미달은 LOW_QUALITY
+3ee2ef301845e87fb4c6572eaa993336,3,,"gosto muito de comprar nas lojas lannister, sempre fiel no prazo de entrega, vou continuar comprando sempre que precisar. o problema foi só esse controle paralelo não funcionou mesmo.",lannister 가게에서 사는 걸 좋아합니다. 배송 기한도 항상 잘 지켜서 필요할 때마다 계속 살 거예요. 문제는 이 호환 리모컨이 아예 작동하지 않았다는 것뿐입니다.,DAMAGED,DAMAGED,high,
+d56de13343062a5ca28b73e637aa7d66,3,,"O MATERIAL DO PRODUTO É BOM, MAS DEIXA A DESEJAR NO IMÃ QUE FECHA A CARTEIRA. É COM POUCA PRESSÃO, E COM UMA SEMANA DE USO, JÁ NÃO FECHA MAIS COMO DEVERIA. E FICA SOLTANDO LINHA DA COSTURA. MEDIANO ","상품 소재는 좋지만 지갑을 닫는 자석이 아쉽습니다. 힘이 약해서 일주일 쓰고 나니 제대로 닫히지 않고, 바느질 실도 풀립니다. 보통입니다.",LOW_QUALITY,LOW_QUALITY,medium,자석 약화·실 풀림은 상품 전반의 내구성으로 보고 DAMAGED 제외
+04a86ddc8dc7a59bd1963915a046884e,3,,O tecido não é bom.,원단이 좋지 않습니다.,LOW_QUALITY,LOW_QUALITY,high,
+f29d95b94e73fb94b4cef9306c9a88fc,3,,Nao gostei do produto...quero devolve-lo.,상품이 마음에 안 들어요... 반품하고 싶습니다.,UNCLEAR,UNCLEAR,high,v0.2: 이유 없는 불만족은 UNCLEAR
+1773b164943bd1c84cc7aceaf966b304,3,,"Comprei uma arara de roupas e quando eu acompanho o pedido fala q foi entregue dia 11, mas eu ainda não recebi ",옷걸이 행거를 샀는데 주문 조회에서는 11일에 배송 완료라고 나오지만 아직 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,"'배송 완료 표시인데 미수령' — 오배달 가능성, 하위 유형 후보"
+c7fb406387b394205dd621f576015d91,3,,nao recebi a mercadoria,물건을 받지 못했습니다.,NOT_RECEIVED,NOT_RECEIVED,high,
+6689aabfeb781e9fc59aceb91b5de579,3,,so demorou um pouco mais valeu,조금 늦었지만 괜찮았어요.,DELAY,DELAY,high,
+2928107a157e4be001d83ec101733c6b,3,Entrega,"Paguei a taxa de entrega, mas tive que ir retirar o produto no correio, mesmo tendo enviado um e-mail, recebi uma resposta eletrônica genérica que não me ajudou em nada",배송비를 냈는데 우체국에 직접 가서 상품을 찾아와야 했습니다. 이메일을 보냈지만 도움이 안 되는 자동 답변만 받았습니다.,SHIPPING_COST|SERVICE,SHIPPING_COST,high,"우체국 직접 수령 → SHIPPING_COST, 자동응답 불만 → SERVICE"
+c18636fae81657b65354a21fdffed916,3,Tempo de espera,"Produto de ótima qualidade, chegou como descrito. Mais a entrega foi mais do que o esperado. Deixou a desejar no tempo de entrega. MUITO DEMORA",상품 품질은 아주 좋고 설명대로 왔습니다. 하지만 배송이 예상보다 오래 걸렸습니다. 배송 기간이 아쉽습니다. 너무 오래 걸려요.,DELAY,DELAY,high,
+0c7571f1c198dee0435fe204ea197a84,3,,"vcs podiam abaixar o valor do frete e colocar de vez enquando frete gratis,seu frete e muito caro!!!!
+",배송비를 좀 낮추고 가끔 무료 배송도 해 주세요. 배송비가 너무 비쌉니다!!!!,SHIPPING_COST,SHIPPING_COST,high,배송비 불만
+800fc0c9e6cee85231ce506306ab6d3b,3,,Bonito e bem levinho.,예쁘고 아주 가벼워요.,NO_COMPLAINT,NO_COMPLAINT,high,3점이지만 텍스트는 긍정
+88b68c2cd3f38d9fa50a6c10d0fe38fe,3,,"Gostaria de saber como proceder para receber o produto, pois ainda o quero.",상품을 받으려면 어떻게 해야 하는지 알고 싶습니다. 여전히 받고 싶거든요.,NOT_RECEIVED,NOT_RECEIVED,medium,'미수령'을 직접 말하지 않았지만 문맥상 미수령
+e3054ac06692e5d5f9fd3499a92c4953,3,,"Paguei o frete mais o produto não chegou em minha casa, tive q ir buscar nos correios.",배송비를 냈는데 상품이 집으로 오지 않아서 우체국에 직접 찾으러 가야 했습니다.,SHIPPING_COST,SHIPPING_COST,high,우체국 직접 수령 — 결국 받았으므로 NOT_RECEIVED 아님
+d734d7fe2a6274c26a786b6588ca5c0f,3,,O produto escolhido foi branco. E veio na cor verde.,흰색을 골랐는데 초록색으로 왔습니다.,WRONG_MISSING,WRONG_MISSING,high,
+ef8d2046c41b725d72761ecfb0c4b5f7,3,,"Produto novo, parece estar tudo certo, porém a caixa nao veio lacrada. ",새 상품이고 다 괜찮아 보이지만 상자가 밀봉되지 않은 채 왔습니다.,OTHER,OTHER,medium,v0.2: 손상 없는 포장 미흡은 DAMAGED 제외 → OTHER. 포장 문제 유형은 없음
+409934c79bbf9e7ad12a9cbb819a84ca,3,Produto incorreto,"Mandei e-mail para lannister, mas ainda não respondeu, deram prazo de dois dias úteis que irá encerrar hoje.",lannister에 이메일을 보냈지만 아직 답이 없습니다. 영업일 이틀 내에 답하겠다고 했는데 그 기한이 오늘 끝납니다.,WRONG_MISSING|SERVICE,WRONG_MISSING,medium,오배송은 제목(잘못된 상품)에서만 확인. '잘못된'이 다른 상품인지 사양 불일치인지 불명
+3697c16de989d4eaa7c02074c12564ee,3,,"apesar de entregue no prazo demorou bastante. o tampo de madeira foi mal embalado e as pontas ficaram danificadas, saindo um pouco da tinta dessas extremidades. a tampa fica solta sobre os cavaletes, ","기한 내에 배송됐지만 꽤 오래 걸렸습니다. 나무 상판 포장이 부실해서 모서리가 손상돼 끝부분 도색이 조금 벗겨졌고, 상판이 받침대 위에 고정되지 않고 그냥 얹혀 있습니다.",DAMAGED|LOW_QUALITY|DELAY,DAMAGED,high,v0.2: 기한 내지만 오래 걸림도 DELAY
+de40ba8436ccad47adf4dcb73aaa5463,3,,"Foi entregue antes no prazo, mas comprei 2 produtos da mesma distribuidora, cobraram 2 fretes e entregaram em dias diferentes.","기한보다 일찍 왔지만, 같은 판매처에서 상품 2개를 샀는데 배송비를 2번 받고 다른 날에 배송했습니다.",SHIPPING_COST,SHIPPING_COST,high,배송비 이중 부과·분할 배송
+527a27581cf0ad4806258bee68dcd760,3,,"Devido a variedade da linha de produtos e opções (aparador pelos da Philips), a loja poderia oferecer informações completas e esclarecedoras, sendo possível comparar e ter ideia de qual modelo vem o q","(필립스 바디 트리머처럼) 상품 라인과 옵션이 다양하니, 가게가 완전하고 명확한 정보를 제공해서 어떤 모델에 무엇이 포함되는지 비교할 수 있게 해야 합니다…(잘림)",NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,medium,v0.2: 정보 부족은 NAD. 텍스트가 잘려 전체 맥락 불명
+7c5687a8af2aa3b9c04f104abc94ae6a,3,,"O produto chegou no prazo , e com todas as peças , porém algumas vieram com as cerdas tortas ou muito ressecadas , e alguns pincéis são muito repetidos . Fora isso o produto é bom","기한 내에 모든 구성품이 왔지만 일부 브러시 모가 휘었거나 너무 말라 있고, 겹치는 브러시가 많습니다. 그 외에는 좋은 상품입니다.",DAMAGED|LOW_QUALITY,DAMAGED,medium,"일부 브러시의 모 휨·건조는 개체 결함 → DAMAGED, 중복 구성은 LOW_QUALITY. 우선순위로 DAMAGED"
+f09e27e8caa28870d448eef18801ec5c,3,,"No anuncio, era PERCAL, mas não é percal tem poliester.... sou alergica a poliester por isso comprei. Só nao devolvi porque irei usar no quarto do meu filho, o produto é bonito","광고에는 퍼케일(면)이라고 했는데 퍼케일이 아니라 폴리에스터가 섞여 있습니다. 폴리에스터 알레르기가 있어서 산 건데요. 아들 방에 쓸 거라 반품은 안 했고, 상품은 예쁩니다.",NOT_AS_DESCRIBED,NOT_AS_DESCRIBED,high,
+360c0dcd08e788454e8907f7b741f24a,3,,"A qualidade do produto muito aquém do anunciado. Embora citado como percal de 180 fios, na realidade é apenas tecido comum 80% algodão e 20% polyester. ",상품 품질이 광고보다 한참 떨어집니다. 180수 퍼케일이라고 했지만 실제로는 면 80%·폴리에스터 20%의 평범한 원단입니다.,NOT_AS_DESCRIBED|LOW_QUALITY,NOT_AS_DESCRIBED,high,
+854e0f3939e7c6d85146e5638ad71aed,3,,e bonita mas pensei que foce melhor,예쁘긴 한데 더 좋을 줄 알았어요.,LOW_QUALITY,LOW_QUALITY,medium,v0.2: 기대 미달은 LOW_QUALITY. 근거는 막연함
+a8886e28d64275e6cb90eca7a708d490,3,Recomendado,"O produto é bom, mas o vendedor precisa ficar atento a qualidade do produto.
+O meu produto veio com um furinho, que parece ser de alfinete, mas que para mim, ficou escondido.
+No geral, o produto é b",상품은 좋지만 판매자가 품질 관리에 신경 써야 합니다. 제 상품에는 핀으로 찌른 듯한 작은 구멍이 있었는데 저는 가려져서 괜찮았습니다. 전반적으로 상품은 좋습니다…,DAMAGED,DAMAGED,high,경미한 개체 결함(작은 구멍)은 DAMAGED
+30f782b1e1a220fbf8127ba92b16c2c4,3,,Cumpriu com os requisitos e em um prazo menor que o previsto,요구 사항을 충족했고 예상보다 짧은 기간에 왔습니다.,NO_COMPLAINT,NO_COMPLAINT,high,3점이지만 텍스트는 긍정
+065853e63fe965368a1eb826b5aadda5,3,,Faltaram 2 jumps que até o momento não foram entregues.,점프 2개가 빠졌고 아직까지 배송되지 않았습니다.,WRONG_MISSING,WRONG_MISSING,high,
+80ed4d2f7087ac639fea2ca563a18ab1,3,Relogio quebrou ,Relogio não marca com precisão as horas no ponteiro. E o botão de regular simplesmente saiu.,시계 바늘이 시간을 정확히 가리키지 않습니다. 그리고 시간 조절 버튼이 그냥 빠져 버렸습니다.,DAMAGED,DAMAGED,high,
+90a435fc6738bd8a0213ed7acd79e212,3,,Demorou muito pra chegar....,오는 데 너무 오래 걸렸어요....,DELAY,DELAY,high,

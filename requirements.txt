@@ -10,6 +10,7 @@ python-dotenv
 # LLM 분류 파이프라인
 anthropic
 google-genai
+pydantic
 tenacity
 tqdm
 

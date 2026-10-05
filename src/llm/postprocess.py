@@ -9,6 +9,8 @@
 - 문의·응대를 기다린 기간("há 3 dias entrando em contato")도 경과 기간으로 인식될 수 있다.
 - 구매 후 사용 기간("comprei ... e com 3 dias parou de funcionar")도 패턴에 걸리지만,
   규칙 1은 NOT_RECEIVED가 있을 때만 발동하므로 영향이 작다.
+
+예외: 미래 표현 vai/vão도 바로 뒤에 fazer가 오면 제외하지 않는다("vai fazer um mês"는 '벌써 한 달째'라는 이미 흐른 기간의 관용 표현).
 """
 import re
 import unicodedata
@@ -31,8 +33,8 @@ WAITING_PATTERNS = {
 # 경과 기간: 이미 흐른 기간을 나타내는 형태와 함께 온 '숫자 + 기간단위'만 인정
 NUMBER = r"(?:\d+|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|quinze|vinte|trinta)"
 UNIT = r"(?:dias?|semanas?|mes|meses)"
-# 미래·추측 표현 (seria, será, serão, vai, vão, deve, deverá — 악센트 제거형, 단어 단위)
-FUTURE_VERBS = r"(?:seria|sera|serao|vai|vao|deve|devera)"
+# 미래·추측 표현 (seria, será, serão, vai, vão, deve, deverá — 악센트 제거형, 단어 단위, 'vai fazer'는 예외)
+FUTURE_VERBS = r"(?:seria|sera|serao|va[io](?!\s+fazer)|deve|devera)"
 # 앞으로의 기간·기한 설명에 쓰이는 단어 (이 단어가 끼면 발동하지 않음)
 FUTURE = rf"(?:prazo|aguard|esper|previs|entreg|\b{FUTURE_VERBS}\b)"
 SKIP_WORDS = rf"(?:(?!{FUTURE})[a-z]+\s+){{0,2}}"  # há/faz와 숫자 사이 수식어(quase, mais de 등) 최대 2단어

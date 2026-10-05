@@ -6,7 +6,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 RAW_REVIEWS = ROOT / "data" / "raw" / "olist_order_reviews_dataset.csv"
 PILOT = ROOT / "data" / "labels" / "pilot_taxonomy_100.csv"
-VALIDATION = ROOT / "data" / "labels" / "validation_300_blank.csv"
+# 검증 샘플 300건 중 정답 라벨이 있는 100건 (no 1~100)
+VALIDATION = ROOT / "data" / "labels" / "validation_100_labeled.csv"
 
 SCORES = [1, 2, 3]
 INPUTS = ["all", "pilot", "validation"]
@@ -26,7 +27,7 @@ def load_ids(path: Path) -> list[str]:
 
 
 def load_targets(input_name: str) -> pd.DataFrame:
-    """분류 대상(all: 전체 1~3점, pilot: 파일럿 100건, validation: 검증 300건)을 불러온다.
+    """분류 대상(all: 전체 1~3점, pilot: 파일럿 100건, validation: 라벨링된 검증 100건)을 불러온다.
 
     pilot·validation은 라벨 파일의 행 순서를 따르고, 텍스트는 원본 리뷰에서 가져온다.
     """

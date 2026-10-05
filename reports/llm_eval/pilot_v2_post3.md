@@ -1,5 +1,6 @@
 # LLM 분류 평가: pilot_v2_post3 vs pilot
 
+- 평가 대상 라벨: labels(후처리 후)
 - 모델: gemini-3.5-flash-lite / 분류 체계: v0.5 / prompt_hash: b0abafe22cb0
 - 평가 건수: 100건 (정답에 있는데 결과에 없는 review_id: 0건, 정답에 없는 결과: 0건)
 

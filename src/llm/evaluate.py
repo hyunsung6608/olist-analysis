@@ -1,6 +1,10 @@
 """LLM 분류 결과(JSONL)를 정답 라벨(파일럿·검증)과 비교해 지표와 불일치 목록을 저장한다.
 
 예) python src/llm/evaluate.py --run-name pilot_v1 --labels pilot
+    python src/llm/evaluate.py --run-name validation_run1 --labels validation --use-raw
+    python src/llm/evaluate.py --run-name validation_run1 --labels validation --exclude-ids 2,3,5
+
+옵션을 쓰면 리포트·불일치 파일 이름에 접미사(_raw, _excl{N})가 붙어 공식 평가 결과를 덮어쓰지 않는다.
 """
 import argparse
 import json
@@ -29,7 +33,16 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run-name", required=True, help="평가할 결과 파일 이름 (llm_labels/{run_name}.jsonl)")
     parser.add_argument("--labels", choices=list(GOLD_FILES), required=True, help="정답 라벨 파일")
-    return parser.parse_args()
+    parser.add_argument("--use-raw", action="store_true", help="labels 대신 raw_labels(후처리 전)로 평가")
+    parser.add_argument("--exclude-ids", default="", help="평가에서 제외할 no 번호(쉼표 구분, 검증 라벨 파일 기준)")
+    args = parser.parse_args()
+    try:
+        args.exclude_nos = sorted({int(x) for x in args.exclude_ids.split(",") if x.strip()})
+    except ValueError:
+        parser.error("--exclude-ids는 쉼표로 구분한 정수여야 합니다. 예: 2,3,5")
+    suffix = ("_raw" if args.use_raw else "") + (f"_excl{len(args.exclude_nos)}" if args.exclude_nos else "")
+    args.out_name = args.run_name + suffix
+    return args
 
 
 def load_gold(name: str, order: list[str]) -> pd.DataFrame:
@@ -43,6 +56,7 @@ def load_gold(name: str, order: list[str]) -> pd.DataFrame:
     else:
         labels = df.apply(lambda r: [c for c in order if r[c].strip() == "1"], axis=1)
     gold = pd.DataFrame({
+        "no": df["no"].astype(int) if "no" in df else None,
         "review_id": df["review_id"],
         "title": df["review_comment_title"],
         "message": df["review_comment_message"],
@@ -102,8 +116,10 @@ def compute_metrics(df: pd.DataFrame, order: list[str]) -> dict:
 def build_report(args, meta: dict, m: dict, n_missing: int, n_extra: int, df: pd.DataFrame, order: list[str]) -> str:
     """지표 요약 마크다운을 만든다."""
     lines = [
-        f"# LLM 분류 평가: {args.run_name} vs {args.labels}",
+        f"# LLM 분류 평가: {args.out_name} vs {args.labels}",
         "",
+        f"- 평가 대상 라벨: {'raw_labels(후처리 전)' if args.use_raw else 'labels(후처리 후)'}"
+        + (f" / 제외한 no: {len(args.exclude_nos)}건 {args.exclude_nos}" if args.exclude_nos else ""),
         f"- 모델: {meta['model']} / 분류 체계: {meta['taxonomy_version']} / prompt_hash: {meta['prompt_hash']}",
         f"- 평가 건수: {m['n']}건 (정답에 있는데 결과에 없는 review_id: {n_missing}건, 정답에 없는 결과: {n_extra}건)",
         "",
@@ -191,8 +207,16 @@ def main() -> None:
 
     gold = load_gold(args.labels, order)
     results = load_results(args.run_name)
-    n_missing = (~gold["review_id"].isin(results["review_id"])).sum()
     n_extra = (~results["review_id"].isin(gold["review_id"])).sum()
+    if args.exclude_nos:
+        assert gold["no"].notna().all(), "--exclude-ids는 no 컬럼이 있는 정답 파일(validation)에서만 쓸 수 있습니다."
+        unknown = set(args.exclude_nos) - set(gold["no"])
+        assert not unknown, f"정답 파일에 없는 no: {sorted(unknown)}"
+        gold = gold[~gold["no"].isin(args.exclude_nos)].reset_index(drop=True)
+    if args.use_raw:
+        assert "raw_labels" in results, "결과 파일에 raw_labels가 없습니다(후처리 도입 전 결과)."
+        results = results.assign(labels=results["raw_labels"])
+    n_missing = (~gold["review_id"].isin(results["review_id"])).sum()
     if n_missing:
         print(f"[주의] 정답 파일에 있는데 결과에 없는 review_id: {n_missing}건 (평가에서 제외)")
 
@@ -209,10 +233,10 @@ def main() -> None:
     m = compute_metrics(df, order)
     meta = {k: ", ".join(sorted(results[k].astype(str).unique())) for k in ["model", "taxonomy_version", "prompt_hash"]}
     report = build_report(args, meta, m, n_missing, n_extra, df, order)
-    if "postprocess_rules" in df:
+    if "postprocess_rules" in df and not args.use_raw:
         report += build_rule_effects(df)
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    report_path = REPORT_DIR / f"{args.run_name}.md"
+    report_path = REPORT_DIR / f"{args.out_name}.md"
     report_path.write_text(report, encoding="utf-8")
 
     mis = df[df["missed"].str.len().gt(0) | df["added"].str.len().gt(0)]
@@ -229,7 +253,7 @@ def main() -> None:
         "정답 note": mis["note"],
     })
     MISMATCH_DIR.mkdir(parents=True, exist_ok=True)
-    mis_path = MISMATCH_DIR / f"{args.run_name}_mismatches.csv"
+    mis_path = MISMATCH_DIR / f"{args.out_name}_mismatches.csv"
     out.to_csv(mis_path, index=False, encoding="utf-8-sig")
 
     print(report)

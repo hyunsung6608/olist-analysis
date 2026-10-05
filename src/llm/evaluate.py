@@ -4,7 +4,7 @@
     python src/llm/evaluate.py --run-name validation_run1 --labels validation --use-raw
     python src/llm/evaluate.py --run-name validation_run1 --labels validation --exclude-ids 2,3,5
 
-옵션을 쓰면 리포트·불일치 파일 이름에 접미사(_raw, _excl{N})가 붙어 공식 평가 결과를 덮어쓰지 않는다.
+옵션을 쓰면 리포트·불일치 파일 이름에 접미사(_adj, _raw, _excl{N})가 붙어 공식 평가 결과를 덮어쓰지 않는다.
 """
 import argparse
 import json
@@ -25,6 +25,8 @@ MISMATCH_DIR = ROOT / "data" / "processed" / "llm_eval"
 GOLD_FILES = {
     "pilot": ROOT / "data" / "labels" / "pilot_taxonomy_100.csv",
     "validation": ROOT / "data" / "labels" / "validation_100_labeled.csv",
+    # 검증 정답 중 규칙과 어긋난 건을 바로잡은 사본 (make_adjudicated_labels.py로 생성)
+    "adjudicated": ROOT / "data" / "labels" / "validation_100_adjudicated.csv",
 }
 
 
@@ -40,7 +42,11 @@ def parse_args() -> argparse.Namespace:
         args.exclude_nos = sorted({int(x) for x in args.exclude_ids.split(",") if x.strip()})
     except ValueError:
         parser.error("--exclude-ids는 쉼표로 구분한 정수여야 합니다. 예: 2,3,5")
-    suffix = ("_raw" if args.use_raw else "") + (f"_excl{len(args.exclude_nos)}" if args.exclude_nos else "")
+    suffix = (
+        ("_adj" if args.labels == "adjudicated" else "")
+        + ("_raw" if args.use_raw else "")
+        + (f"_excl{len(args.exclude_nos)}" if args.exclude_nos else "")
+    )
     args.out_name = args.run_name + suffix
     return args
 

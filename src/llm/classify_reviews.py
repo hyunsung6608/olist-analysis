@@ -26,6 +26,7 @@ from tenacity import retry, retry_if_exception, stop_after_attempt
 from tqdm import tqdm
 
 from data import INPUTS, load_targets
+from postprocess import find_violations, postprocess
 from prompts import ReviewLabel, build_generate_config, build_system_instruction, build_user_message
 from taxonomy import SOLO, load_priority, load_version, primary_label
 
@@ -273,7 +274,8 @@ def main() -> None:
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     clf = GeminiClassifier(api_key, model, args.rpm, args.max_calls)
-    n_saved = n_error = n_error_batches = n_inconsistent = 0
+    n_saved = n_error = n_error_batches = 0
+    rule_counts, violation_counts = Counter(), Counter()
     stop_reason = "완료"
     batches = [pending.iloc[i:i + args.batch_size] for i in range(0, len(pending), args.batch_size)]
     print(f"모델: {model} / 분류 체계 {taxonomy_version} / prompt_hash {prompt_hash}")
@@ -308,16 +310,21 @@ def main() -> None:
             by_id = {r.review_id: r for r in results}
             created_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
             records = []
-            for rid in (r["review_id"] for r in reviews):
-                r = by_id[rid]
-                labels = [c for c in order if c in {label.value for label in r.labels}]
+            for review in reviews:
+                r = by_id[review["review_id"]]
+                raw_labels = [c for c in order if c in {label.value for label in r.labels}]
                 evidence = [{"quote": e.quote, "label": e.label.value} for e in r.evidence]
-                if evidence and {e["label"] for e in evidence} != set(labels):
-                    n_inconsistent += 1
+                labels, rules = postprocess(
+                    {"raw_labels": raw_labels, "evidence": evidence}, review["title"], review["message"]
+                )
+                rule_counts.update(rule.split(":")[0] for rule in rules)
+                violation_counts.update(find_violations(labels))
                 records.append({
-                    "review_id": rid,
+                    "review_id": review["review_id"],
                     "evidence": evidence,
+                    "raw_labels": raw_labels,
                     "labels": labels,
+                    "postprocess_rules": rules,
                     "primary_label": primary_label(labels, order),
                     "reason": r.reason,
                     "model": model,
@@ -336,7 +343,7 @@ def main() -> None:
     print(f"  처리 건수: {n_saved}건 → {out_path.relative_to(ROOT)}")
     print(f"  에러 건수: {n_error}건 ({n_error_batches}배치)" + (f" → {err_path.relative_to(ROOT)}" if n_error else ""))
     print(f"  남은 건수: {remaining:,}건")
-    print(f"  evidence 유형과 labels가 다른 건: {n_inconsistent}건 (저장은 LLM 응답 그대로)")
+    print(f"  후처리 적용: {dict(rule_counts) or '없음'} / 남은 규칙 위반: {dict(violation_counts) or '없음'}")
     print(f"  입력 토큰: {clf.tokens['input']:,} / 출력 토큰: {clf.tokens['output']:,} (사고 토큰 {clf.tokens['thinking']:,} 별도)")
 
 

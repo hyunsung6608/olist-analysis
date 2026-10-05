@@ -146,6 +146,43 @@ def build_report(args, meta: dict, m: dict, n_missing: int, n_extra: int, df: pd
     return "\n".join(lines) + "\n"
 
 
+def build_rule_effects(df: pd.DataFrame) -> str:
+    """후처리 규칙별·발동 표현별로 적용 건수와 정답에 가까워진/틀어진 건수를 표로 만든다.
+
+    정답과의 거리는 라벨 집합의 대칭차 크기로 잰다(raw_labels 대비 labels).
+    """
+    rows = Counter()
+    for _, r in df.iterrows():
+        gold = set(r["gold_labels"])
+        before = len(gold ^ set(r["raw_labels"]))
+        after = len(gold ^ set(r["llm_labels"]))
+        effect = "closer" if after < before else "worse" if after > before else "same"
+        for rule in r["postprocess_rules"]:
+            name = rule.split(":")[0]
+            keys = [(name, "(전체)")]
+            if name == "R1_K_DELAY":
+                keys.append((name, rule.split(":", 1)[1]))
+            for key in keys:
+                rows[key + ("applied",)] += 1
+                rows[key + (effect,)] += 1
+    keys = sorted({k[:2] for k in rows})
+    lines = [
+        "",
+        "## 후처리 규칙 효과 (LLM 원래 결과 대비)",
+        "",
+        "| 규칙 | 세부 | 적용 | 정답에 가까워짐 | 변화 없음 | 틀어짐 |",
+        "|---|---|---|---|---|---|",
+    ]
+    for key in keys:
+        lines.append(
+            f"| {key[0]} | {key[1]} | {rows[key + ('applied',)]} | {rows[key + ('closer',)]} "
+            f"| {rows[key + ('same',)]} | {rows[key + ('worse',)]} |"
+        )
+    if not keys:
+        lines.append("| (적용 없음) | | 0 | 0 | 0 | 0 |")
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     """결과와 정답을 결합해 지표를 계산하고 리포트·불일치 목록을 저장한다."""
     sys.stdout.reconfigure(encoding="utf-8")
@@ -172,6 +209,8 @@ def main() -> None:
     m = compute_metrics(df, order)
     meta = {k: ", ".join(sorted(results[k].astype(str).unique())) for k in ["model", "taxonomy_version", "prompt_hash"]}
     report = build_report(args, meta, m, n_missing, n_extra, df, order)
+    if "postprocess_rules" in df:
+        report += build_rule_effects(df)
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     report_path = REPORT_DIR / f"{args.run_name}.md"
     report_path.write_text(report, encoding="utf-8")

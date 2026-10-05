@@ -4,6 +4,11 @@
 규칙 1(규칙 K 보완): NOT_RECEIVED가 있고 WRONG_MISSING이 없으며, 제목+본문에
                     계속 대기 표현이나 경과 기간이 있으면 DELAY를 추가한다.
 규칙 2를 먼저 적용한다(규칙 1이 붙인 DELAY는 evidence에 없으므로 순서가 바뀌면 지워짐).
+
+알려진 한계:
+- 문의·응대를 기다린 기간("há 3 dias entrando em contato")도 경과 기간으로 인식될 수 있다.
+- 구매 후 사용 기간("comprei ... e com 3 dias parou de funcionar")도 패턴에 걸리지만,
+  규칙 1은 NOT_RECEIVED가 있을 때만 발동하므로 영향이 작다.
 """
 import re
 import unicodedata
@@ -26,8 +31,10 @@ WAITING_PATTERNS = {
 # 경과 기간: 이미 흐른 기간을 나타내는 형태와 함께 온 '숫자 + 기간단위'만 인정
 NUMBER = r"(?:\d+|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|quinze|vinte|trinta)"
 UNIT = r"(?:dias?|semanas?|mes|meses)"
+# 미래·추측 표현 (seria, será, serão, vai, vão, deve, deverá — 악센트 제거형, 단어 단위)
+FUTURE_VERBS = r"(?:seria|sera|serao|vai|vao|deve|devera)"
 # 앞으로의 기간·기한 설명에 쓰이는 단어 (이 단어가 끼면 발동하지 않음)
-FUTURE = r"(?:prazo|aguard|esper|previs|entreg)"
+FUTURE = rf"(?:prazo|aguard|esper|previs|entreg|\b{FUTURE_VERBS}\b)"
 SKIP_WORDS = rf"(?:(?!{FUTURE})[a-z]+\s+){{0,2}}"  # há/faz와 숫자 사이 수식어(quase, mais de 등) 최대 2단어
 ELAPSED_PATTERNS = {
     "há": rf"\bha\s+{SKIP_WORDS}{NUMBER}\s+{UNIT}\b",
@@ -39,8 +46,9 @@ ELAPSED_PATTERNS = {
         rf"(?:(?!{FUTURE})[^.!?]){{0,40}}?\b{NUMBER}\s+{UNIT}\b"
     ),
 }
-# 기간 바로 앞(20자 이내)에 앞으로의 기간을 뜻하는 단어가 있으면 제외 (예: 'aguardar mais de 2 dias')
-FUTURE_BEFORE = rf"\b(?:aguardar|aguarde|esperar|espere|prazo|previsao)\b[^.!?]{{0,20}}$"
+# 기간 바로 앞(20자 이내)에 앞으로의 기간·추측을 뜻하는 단어가 있으면 제외
+# (예: 'aguardar mais de 2 dias', 'seria mais de 30 dias')
+FUTURE_BEFORE = rf"\b(?:aguardar|aguarde|esperar|espere|prazo|previsao|{FUTURE_VERBS})\b[^.!?]{{0,20}}$"
 
 RULE_EVIDENCE = "R2_EVIDENCE"
 RULE_K_DELAY = "R1_K_DELAY"

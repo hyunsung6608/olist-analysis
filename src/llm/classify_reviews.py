@@ -281,61 +281,67 @@ def main() -> None:
     print(f"모델: {model} / 분류 체계 {taxonomy_version} / prompt_hash {prompt_hash}")
     print(f"대상 {len(targets):,}건 중 이미 처리 {len(targets) - len(pending):,}건, 남은 {len(pending):,}건 ({len(batches):,}배치)")
 
-    with tqdm(total=min(len(pending), args.max_calls * args.batch_size), unit="건") as bar:
-        for batch in batches:
-            reviews = to_review_dicts(batch)
-            try:
-                results = classify_batch(clf, system_instruction, reviews)
-            except CallLimitReached:
-                stop_reason = f"최대 호출 수({args.max_calls}회) 도달"
-                break
-            except ResponseInvalid as e:
-                n_error += len(reviews)
-                n_error_batches += 1
-                append_jsonl(err_path, [{
-                    "review_ids": [r["review_id"] for r in reviews],
-                    "error": str(e),
-                    "model": model,
-                    "prompt_hash": prompt_hash,
-                    "run_name": args.run_name,
-                    "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                }])
-                tqdm.write(f"[에러 기록] {len(reviews)}건 → {err_path.name}")
-                bar.update(len(reviews))
-                continue
-            except errors.APIError as e:
-                stop_reason = f"API 오류로 중단: {e.code} {e.status} {str(e.message)[:200]}"
-                break
+    interrupted = False
+    try:
+        with tqdm(total=min(len(pending), args.max_calls * args.batch_size), unit="건", dynamic_ncols=True) as bar:
+            for batch in batches:
+                reviews = to_review_dicts(batch)
+                try:
+                    results = classify_batch(clf, system_instruction, reviews)
+                except CallLimitReached:
+                    stop_reason = f"최대 호출 수({args.max_calls}회) 도달"
+                    break
+                except ResponseInvalid as e:
+                    n_error += len(reviews)
+                    n_error_batches += 1
+                    append_jsonl(err_path, [{
+                        "review_ids": [r["review_id"] for r in reviews],
+                        "error": str(e),
+                        "model": model,
+                        "prompt_hash": prompt_hash,
+                        "run_name": args.run_name,
+                        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    }])
+                    tqdm.write(f"[에러 기록] {len(reviews)}건 → {err_path.name}")
+                    bar.update(len(reviews))
+                    continue
+                except errors.APIError as e:
+                    stop_reason = f"API 오류로 중단: {e.code} {e.status} {str(e.message)[:200]}"
+                    break
 
-            by_id = {r.review_id: r for r in results}
-            created_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-            records = []
-            for review in reviews:
-                r = by_id[review["review_id"]]
-                raw_labels = [c for c in order if c in {label.value for label in r.labels}]
-                evidence = [{"quote": e.quote, "label": e.label.value} for e in r.evidence]
-                labels, rules = postprocess(
-                    {"raw_labels": raw_labels, "evidence": evidence}, review["title"], review["message"]
-                )
-                rule_counts.update(rule.split(":")[0] for rule in rules)
-                violation_counts.update(find_violations(labels))
-                records.append({
-                    "review_id": review["review_id"],
-                    "evidence": evidence,
-                    "raw_labels": raw_labels,
-                    "labels": labels,
-                    "postprocess_rules": rules,
-                    "primary_label": primary_label(labels, order),
-                    "reason": r.reason,
-                    "model": model,
-                    "taxonomy_version": taxonomy_version,
-                    "prompt_hash": prompt_hash,
-                    "run_name": args.run_name,
-                    "created_at": created_at,
-                })
-            append_jsonl(out_path, records)
-            n_saved += len(records)
-            bar.update(len(records))
+                by_id = {r.review_id: r for r in results}
+                created_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+                records = []
+                for review in reviews:
+                    r = by_id[review["review_id"]]
+                    raw_labels = [c for c in order if c in {label.value for label in r.labels}]
+                    evidence = [{"quote": e.quote, "label": e.label.value} for e in r.evidence]
+                    labels, rules = postprocess(
+                        {"raw_labels": raw_labels, "evidence": evidence}, review["title"], review["message"]
+                    )
+                    rule_counts.update(rule.split(":")[0] for rule in rules)
+                    violation_counts.update(find_violations(labels))
+                    records.append({
+                        "review_id": review["review_id"],
+                        "evidence": evidence,
+                        "raw_labels": raw_labels,
+                        "labels": labels,
+                        "postprocess_rules": rules,
+                        "primary_label": primary_label(labels, order),
+                        "reason": r.reason,
+                        "model": model,
+                        "taxonomy_version": taxonomy_version,
+                        "prompt_hash": prompt_hash,
+                        "run_name": args.run_name,
+                        "created_at": created_at,
+                    })
+                append_jsonl(out_path, records)
+                n_saved += len(records)
+                bar.update(len(records))
+    except KeyboardInterrupt:
+        # 이미 기록된 배치는 배치마다 fsync되어 남아 있고, 진행 중이던 배치는 다음 실행에서 다시 처리된다.
+        interrupted = True
+        stop_reason = "사용자 중단(Ctrl+C) — 진행 중이던 배치는 저장되지 않음, 같은 명령으로 이어서 실행 가능"
 
     remaining = len(pending) - n_saved - n_error
     print(f"\n[요약] {stop_reason}")
@@ -345,6 +351,8 @@ def main() -> None:
     print(f"  남은 건수: {remaining:,}건")
     print(f"  후처리 적용: {dict(rule_counts) or '없음'} / 남은 규칙 위반: {dict(violation_counts) or '없음'}")
     print(f"  입력 토큰: {clf.tokens['input']:,} / 출력 토큰: {clf.tokens['output']:,} (사고 토큰 {clf.tokens['thinking']:,} 별도)")
+    if interrupted:
+        sys.exit(130)
 
 
 if __name__ == "__main__":

@@ -19,11 +19,28 @@ WAITING_PATTERNS = {
     "ate o momento": r"\bate o momento\b",
     "ate o presente momento": r"\bate o presente momento\b",
     "ate agora": r"\bate agora\b",
-    "ainda nao": r"\bainda (?:nao|n)\b",
+    # '아직도 기다린다' (ainda não = '아직 못 받았다'는 미수령 기본 표현이라 제외)
+    "ainda aguardando": r"\bainda (?:estou |to )?(?:aguardando|aguardo|esperando|espero)\b",
 }
-# 경과 기간: 숫자(또는 수사) + 일·주·월
+
+# 경과 기간: 이미 흐른 기간을 나타내는 형태와 함께 온 '숫자 + 기간단위'만 인정
 NUMBER = r"(?:\d+|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|quinze|vinte|trinta)"
-ELAPSED_PATTERN = rf"\b{NUMBER}\s+(?:dias?|semanas?|mes|meses)\b"
+UNIT = r"(?:dias?|semanas?|mes|meses)"
+# 앞으로의 기간·기한 설명에 쓰이는 단어 (이 단어가 끼면 발동하지 않음)
+FUTURE = r"(?:prazo|aguard|esper|previs|entreg)"
+SKIP_WORDS = rf"(?:(?!{FUTURE})[a-z]+\s+){{0,2}}"  # há/faz와 숫자 사이 수식어(quase, mais de 등) 최대 2단어
+ELAPSED_PATTERNS = {
+    "há": rf"\bha\s+{SKIP_WORDS}{NUMBER}\s+{UNIT}\b",
+    "faz": rf"\bfaz\s+{SKIP_WORDS}{NUMBER}\s+{UNIT}\b",
+    "mais de": rf"\bmais de\s+{NUMBER}\s+{UNIT}\b",
+    "atrás": rf"\b{NUMBER}\s+{UNIT}\s+atras\b",
+    "구매 시점부터": (
+        rf"\b(?:comprei|compra (?:foi )?(?:feita|efetuada|realizada)|pedido (?:foi )?feito)\b"
+        rf"(?:(?!{FUTURE})[^.!?]){{0,40}}?\b{NUMBER}\s+{UNIT}\b"
+    ),
+}
+# 기간 바로 앞(20자 이내)에 앞으로의 기간을 뜻하는 단어가 있으면 제외 (예: 'aguardar mais de 2 dias')
+FUTURE_BEFORE = rf"\b(?:aguardar|aguarde|esperar|espere|prazo|previsao)\b[^.!?]{{0,20}}$"
 
 RULE_EVIDENCE = "R2_EVIDENCE"
 RULE_K_DELAY = "R1_K_DELAY"
@@ -36,14 +53,16 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text)
 
 
-def find_delay_trigger(title: str, message: str) -> str | None:
-    """제목+본문에서 계속 대기 표현이나 경과 기간을 찾아 이름을 돌려준다. 없으면 None."""
+def find_delay_trigger(title: str, message: str) -> tuple[str, str] | None:
+    """제목+본문에서 계속 대기 표현이나 경과 기간을 찾아 (이름, 매칭 구절)을 돌려준다. 없으면 None."""
     text = normalize(f"{title or ''} {message or ''}")
     for name, pattern in WAITING_PATTERNS.items():
-        if re.search(pattern, text):
-            return name
-    if re.search(ELAPSED_PATTERN, text):
-        return "경과 기간"
+        if match := re.search(pattern, text):
+            return name, match.group(0)
+    for name, pattern in ELAPSED_PATTERNS.items():
+        for match in re.finditer(pattern, text):
+            if not re.search(FUTURE_BEFORE, text[max(0, match.start() - 30):match.start()]):
+                return f"경과 기간({name})", match.group(0)
     return None
 
 
@@ -66,7 +85,7 @@ def postprocess(record: dict, title: str, message: str) -> tuple[list[str], list
         trigger = find_delay_trigger(title, message)
         if trigger:
             labels.add("DELAY")
-            rules.append(f"{RULE_K_DELAY}:{trigger}")
+            rules.append(f"{RULE_K_DELAY}:{trigger[0]}")
 
     return [c for c in ORDER if c in labels], rules
 

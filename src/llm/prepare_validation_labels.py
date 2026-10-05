@@ -3,35 +3,19 @@
 no 1~100번 행만 사용하고, 유형 컬럼의 TRUE/FALSE를 1/0으로 바꾼 뒤
 complaint_taxonomy.md의 우선순위 규칙으로 primary_label을 계산한다.
 """
-import re
 from pathlib import Path
 
 import pandas as pd
 
+from taxonomy import LABEL_CODES as LABEL_COLS
+from taxonomy import SOLO, load_priority, primary_label
+
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "data" / "labels" / "validation_labeled_raw.csv"
 BLANK = ROOT / "data" / "labels" / "validation_300_blank.csv"
-TAXONOMY = ROOT / "src" / "llm" / "complaint_taxonomy.md"
 OUT = ROOT / "data" / "labels" / "validation_100_labeled.csv"
 
 N_LABELED = 100
-LABEL_COLS = [
-    "DELAY", "NOT_RECEIVED", "WRONG_MISSING", "DAMAGED", "NOT_AS_DESCRIBED", "LOW_QUALITY",
-    "SERVICE", "SHIPPING_COST", "OTHER", "UNCLEAR", "NO_COMPLAINT",
-]
-# 우선순위 체인에 없는 유형: 다른 유형이 없을 때만 주 원인 (이 순서로 선택)
-FALLBACK = ["OTHER", "UNCLEAR", "NO_COMPLAINT"]
-SOLO = ["NO_COMPLAINT", "UNCLEAR"]
-
-
-def load_priority() -> list[str]:
-    """분류 체계 문서의 '주 원인 우선순위' 코드 블록에서 우선순위를 읽는다."""
-    text = TAXONOMY.read_text(encoding="utf-8")
-    section = text.split("## 주 원인 우선순위", 1)[1]
-    chain = re.search(r"```\s*\n(.+?)\n```", section, re.S).group(1)
-    order = [c.strip() for c in chain.split(">")] + FALLBACK
-    assert sorted(order) == sorted(LABEL_COLS), f"우선순위와 유형 컬럼이 다름: {order}"
-    return order
 
 
 def to_binary(df: pd.DataFrame) -> pd.DataFrame:
@@ -46,7 +30,7 @@ def to_binary(df: pd.DataFrame) -> pd.DataFrame:
 
 def primary_of(row: pd.Series, order: list[str]) -> str:
     """체크된 유형 중 우선순위가 가장 높은 것을 주 원인으로 고른다."""
-    return next((c for c in order if row[c] == 1), "")
+    return primary_label([c for c in LABEL_COLS if row[c] == 1], order)
 
 
 def main() -> None:

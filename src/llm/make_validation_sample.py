@@ -7,27 +7,16 @@ from pathlib import Path
 
 import pandas as pd
 
+from data import load_population
+from taxonomy import LABEL_CODES as LABEL_COLS
+
 ROOT = Path(__file__).resolve().parents[2]
-RAW_REVIEWS = ROOT / "data" / "raw" / "olist_order_reviews_dataset.csv"
 PILOT = ROOT / "data" / "labels" / "pilot_taxonomy_100.csv"
 OUT_BLANK = ROOT / "data" / "labels" / "validation_300_blank.csv"
 OUT_META = ROOT / "data" / "labels" / "validation_300_meta.csv"
 
 N_SAMPLE = 300
-SCORES = [1, 2, 3]
 RANDOM_STATE = 42
-LABEL_COLS = [
-    "DELAY", "NOT_RECEIVED", "WRONG_MISSING", "DAMAGED", "NOT_AS_DESCRIBED", "LOW_QUALITY",
-    "SERVICE", "SHIPPING_COST", "OTHER", "UNCLEAR", "NO_COMPLAINT",
-]
-
-
-def load_population() -> pd.DataFrame:
-    """텍스트가 있는 1~3점 리뷰를 review_id 기준 중복 제거해 불러온다."""
-    df = pd.read_csv(RAW_REVIEWS, encoding="utf-8")
-    has_text = df["review_comment_message"].notna() & (df["review_comment_message"].str.strip() != "")
-    df = df[has_text & df["review_score"].isin(SCORES)]
-    return df.drop_duplicates("review_id", keep="first").reset_index(drop=True)
 
 
 def allocate(counts: pd.Series, n: int) -> pd.Series:

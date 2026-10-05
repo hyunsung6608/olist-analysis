@@ -72,6 +72,13 @@ def fmt_list(labels: list[str]) -> str:
     return "|".join(labels)
 
 
+def fmt_evidence(evidence) -> str:
+    """evidence 목록을 '[유형] 구절' 줄 단위 문자열로 바꾼다(없으면 빈 문자열)."""
+    if not isinstance(evidence, list):
+        return ""
+    return "\n".join(f"[{e['label']}] {e['quote']}" for e in evidence)
+
+
 def compute_metrics(df: pd.DataFrame, order: list[str]) -> dict:
     """완전 일치율, 유형별·micro·macro 지표, 주 원인 정확도·kappa를 계산한다."""
     mlb = MultiLabelBinarizer(classes=order)
@@ -178,6 +185,7 @@ def main() -> None:
         "LLM labels": mis["llm_labels"].apply(fmt_list),
         "빠뜨린 라벨": mis["missed"].apply(fmt_list),
         "잘못 붙인 라벨": mis["added"].apply(fmt_list),
+        "LLM evidence": mis["evidence"].apply(fmt_evidence) if "evidence" in mis else "",
         "LLM reason": mis["reason"],
         "정답 note": mis["note"],
     })

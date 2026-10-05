@@ -273,7 +273,7 @@ def main() -> None:
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     clf = GeminiClassifier(api_key, model, args.rpm, args.max_calls)
-    n_saved = n_error = n_error_batches = 0
+    n_saved = n_error = n_error_batches = n_inconsistent = 0
     stop_reason = "완료"
     batches = [pending.iloc[i:i + args.batch_size] for i in range(0, len(pending), args.batch_size)]
     print(f"모델: {model} / 분류 체계 {taxonomy_version} / prompt_hash {prompt_hash}")
@@ -311,8 +311,12 @@ def main() -> None:
             for rid in (r["review_id"] for r in reviews):
                 r = by_id[rid]
                 labels = [c for c in order if c in {label.value for label in r.labels}]
+                evidence = [{"quote": e.quote, "label": e.label.value} for e in r.evidence]
+                if evidence and {e["label"] for e in evidence} != set(labels):
+                    n_inconsistent += 1
                 records.append({
                     "review_id": rid,
+                    "evidence": evidence,
                     "labels": labels,
                     "primary_label": primary_label(labels, order),
                     "reason": r.reason,
@@ -332,6 +336,7 @@ def main() -> None:
     print(f"  처리 건수: {n_saved}건 → {out_path.relative_to(ROOT)}")
     print(f"  에러 건수: {n_error}건 ({n_error_batches}배치)" + (f" → {err_path.relative_to(ROOT)}" if n_error else ""))
     print(f"  남은 건수: {remaining:,}건")
+    print(f"  evidence 유형과 labels가 다른 건: {n_inconsistent}건 (저장은 LLM 응답 그대로)")
     print(f"  입력 토큰: {clf.tokens['input']:,} / 출력 토큰: {clf.tokens['output']:,} (사고 토큰 {clf.tokens['thinking']:,} 별도)")
 
 

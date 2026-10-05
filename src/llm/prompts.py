@@ -8,7 +8,7 @@ from enum import Enum
 from pathlib import Path
 
 from google.genai import types
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 ROOT = Path(__file__).resolve().parents[2]
 TAXONOMY = ROOT / "src" / "llm" / "complaint_taxonomy.md"
@@ -21,10 +21,22 @@ LABEL_CODES = [
 Label = Enum("Label", {code: code for code in LABEL_CODES}, type=str)
 
 
+class Evidence(BaseModel):
+    """불만이 드러난 구절 1개와 그 유형."""
+
+    model_config = ConfigDict(json_schema_extra={"propertyOrdering": ["quote", "label"]})
+
+    quote: str
+    label: Label
+
+
 class ReviewLabel(BaseModel):
-    """리뷰 1건의 분류 결과."""
+    """리뷰 1건의 분류 결과. 근거 구절(evidence)을 먼저 쓰고 labels를 정하도록 속성 순서를 고정한다."""
+
+    model_config = ConfigDict(json_schema_extra={"propertyOrdering": ["review_id", "evidence", "labels", "reason"]})
 
     review_id: str
+    evidence: list[Evidence]
     labels: list[Label] = Field(min_length=1)
     reason: str
 
@@ -39,7 +51,7 @@ def load_taxonomy() -> str:
 
 
 def build_system_instruction() -> str:
-    """역할, 분류 체계 문서 전문, 판단 원칙을 담은 시스템 지시문을 만든다."""
+    """역할, 분류 체계 문서 전문, 판단 절차, 출력 규칙을 담은 시스템 지시문을 만든다."""
     return f"""당신은 브라질 이커머스 플랫폼 Olist의 고객 리뷰(포르투갈어)를 불만 유형별로 분류하는 분석가입니다.
 아래 분류 체계 문서를 기준으로 각 리뷰에 불만 유형 라벨을 부여합니다.
 
@@ -47,10 +59,18 @@ def build_system_instruction() -> str:
 {load_taxonomy()}
 </분류_체계>
 
-판단 원칙:
-- 제목(title)과 본문(message)을 함께 보고 판단합니다. 둘 중 하나가 비어 있을 수 있습니다.
+판단 절차 (리뷰마다 이 순서로 진행합니다):
+1. 제목(title)과 본문(message)을 문장 단위로 나눕니다. 둘 중 하나가 비어 있을 수 있습니다.
+2. 불만이 드러난 구절을 모두 찾습니다. 제목에만 있는 불만도 포함합니다.
+3. 구절마다 분류 체계의 유형 정의와 경계 판정 규칙으로 유형을 정합니다.
+4. 주된 불만뿐 아니라 부가적인 불만(품질 불만 등)도 모두 라벨로 붙입니다.
+5. DELAY는 따로 한 번 더 점검합니다: 지연, 오래 걸림, 경과 기간, 기한 초과, 계속 대기 표현이 있는지 확인하고 규칙 K·L에 따라 DELAY 부여 여부를 정합니다.
+
+출력 규칙:
+- evidence: 불만이 드러난 구절마다 quote와 label을 하나씩 넣습니다. quote는 리뷰 원문(포르투갈어)을 번역하지 않고 그대로 옮깁니다. 한 구절이 두 유형에 해당하면 항목을 두 개로 나눕니다.
+- labels: evidence에 나온 유형을 빠짐없이, 중복 없이 모은 것이어야 합니다. 불만 구절이 없어 evidence가 비어 있으면 NO_COMPLAINT 또는 UNCLEAR 중 하나만 넣습니다.
+- NO_COMPLAINT와 UNCLEAR는 다른 유형과 함께 쓰지 않고 단독으로만 사용합니다.
 - 텍스트에 드러난 내용만을 기준으로 판단하고, 텍스트에 없는 내용은 추측하지 않습니다.
-- labels에는 해당하는 유형을 모두 넣습니다. 단, NO_COMPLAINT와 UNCLEAR는 다른 유형과 함께 쓰지 않고 단독으로만 사용합니다.
 - 주 원인(primary_label)은 고르지 않습니다. labels만 부여합니다.
 - reason에는 판단 근거를 한국어 한 문장으로 씁니다.
 - 입력된 모든 리뷰에 대해 review_id를 그대로 사용해 하나씩 결과를 반환합니다."""

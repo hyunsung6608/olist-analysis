@@ -1,11 +1,12 @@
-"""Olist 데이터 파이프라인(품질 검사 → 스키마 → 적재 → 검증)을 순서대로 실행한다.
+"""Olist 데이터 파이프라인(품질 검사 → 스키마 → 적재 → 뷰 → 검증)을 순서대로 실행한다.
 
 전체 데이터 흐름:
     data/raw/*.csv (Kaggle 원본, 읽기 전용)
       → 1. 품질 검사   src/etl/quality_check.py  → reports/data_quality.md
       → 2. 스키마 생성 src/etl/create_schema.py  ← sql/schema/01_create_tables.sql
       → 3. 적재        src/etl/load.py           (품질 리포트의 변환 방침 적용, + data/results/review_complaint_labels.csv)
-      → 4. 적재 검증   src/etl/validate_load.py  → reports/load_validation.md
+      → 4. 분석 뷰     src/etl/create_views.py   ← sql/views/*.sql (품질 리포트의 표시·집계 제외 방침을 플래그로 구현)
+      → 5. 적재 검증   src/etl/validate_load.py  → reports/load_validation.md
 
 LLM 분류가 이 파이프라인에 없는 이유:
     리뷰 분류(src/llm/classify_reviews.py → export_labels.py)는 Gemini API를 수천 번 호출하고
@@ -46,9 +47,9 @@ def check_labels_file() -> None:
     )
 
 
-def run_step(no: int, name: str, args: list[str]) -> float:
+def run_step(no: int, total: int, name: str, args: list[str]) -> float:
     """단계 하나를 하위 프로세스로 실행하고 소요 시간을 돌려준다. 실패하면 단계 이름을 알리고 종료한다."""
-    print(f"\n{'=' * 70}\n[{no}/4] {name} 시작: {' '.join(args)}\n{'=' * 70}", flush=True)
+    print(f"\n{'=' * 70}\n[{no}/{total}] {name} 시작: {' '.join(args)}\n{'=' * 70}", flush=True)
     start = time.perf_counter()
     result = subprocess.run([sys.executable, *args], cwd=ROOT)
     elapsed = time.perf_counter() - start
@@ -56,12 +57,12 @@ def run_step(no: int, name: str, args: list[str]) -> float:
         print(f"\n[실패] {no}단계 '{name}'에서 멈췄습니다 (종료 코드 {result.returncode}, {elapsed:.1f}초). "
               "위 출력을 확인하세요. 이후 단계는 실행하지 않았습니다.")
         sys.exit(result.returncode)
-    print(f"[{no}/4] {name} 종료 ({elapsed:.1f}초)", flush=True)
+    print(f"[{no}/{total}] {name} 종료 ({elapsed:.1f}초)", flush=True)
     return elapsed
 
 
 def main() -> None:
-    """분류 결과 파일을 확인하고 4단계를 순서대로 실행한 뒤 단계별 소요 시간을 출력한다."""
+    """분류 결과 파일을 확인하고 단계를 순서대로 실행한 뒤 단계별 소요 시간을 출력한다."""
     sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args()
     check_labels_file()
@@ -69,10 +70,11 @@ def main() -> None:
         ("품질 검사", [str(ETL / "quality_check.py")]),
         ("스키마 생성", [str(ETL / "create_schema.py")] + (["--reset"] if args.reset else [])),
         ("적재", [str(ETL / "load.py")]),
+        ("분석 뷰 생성", [str(ETL / "create_views.py")]),
         ("적재 검증", [str(ETL / "validate_load.py")]),
     ]
     total_start = time.perf_counter()
-    timings = [(name, run_step(i, name, step_args)) for i, (name, step_args) in enumerate(steps, 1)]
+    timings = [(name, run_step(i, len(steps), name, step_args)) for i, (name, step_args) in enumerate(steps, 1)]
 
     print(f"\n{'=' * 70}\n[완료] 파이프라인 전체 성공")
     for name, elapsed in timings:

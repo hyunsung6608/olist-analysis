@@ -1,2 +1,3 @@
 # MySQL 적재용 결과 CSV는 OS와 관계없이 LF로 유지한다 (core.autocrlf=true여도 CRLF로 바뀌지 않게)
 data/results/*.csv text eol=lf
+data/tableau/*.csv text eol=lf

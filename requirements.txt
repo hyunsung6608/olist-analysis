@@ -1,25 +1,26 @@
+# Python 3.13 기준, 개발 환경(venv)에 실제 설치된 버전으로 고정
+
 # 데이터 처리
-pandas
-numpy
+pandas==3.0.6
+numpy==2.5.3
 
 # DB 연결
-sqlalchemy
-pymysql
-python-dotenv
+sqlalchemy==2.1.2
+pymysql==1.2.3
+python-dotenv==1.2.4
 
 # LLM 분류 파이프라인
-anthropic
-google-genai
-pydantic
-tenacity
-tqdm
+google-genai==2.28.0
+pydantic==2.13.5
+tenacity==9.1.4
+tqdm==4.70.1
 
 # 통계 분석 / LLM 정확도 검증
-scipy
-statsmodels
-scikit-learn
+scipy==1.18.1
+statsmodels==0.15.0
+scikit-learn==1.9.1
 
 # 시각화 / 노트북
-matplotlib
-seaborn
-jupyter
+matplotlib==3.11.2
+seaborn==0.13.2
+jupyter==1.1.1

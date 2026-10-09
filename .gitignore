@@ -6,3 +6,11 @@ data/processed/*
 venv/
 __pycache__/
 .ipynb_checkpoints/
+
+# Tableau 자동 복구 파일, 편집기·OS 설정, 로그
+*.twbr
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db

@@ -70,6 +70,40 @@ JOIN review_order ro ON ro.review_id = l.review_id
 """
 
 
+# MySQL의 AVG()는 정수 평균을 소수 4자리로 반올림해 돌려주므로(div_precision_increment = 4),
+# 비율은 SQL에서 건수(SUM)로 받아 Python에서 건수 ÷ 분모로 계산한다.
+
+# 판매자별 지연 건수 (q4_01과 같은 대상: 판매자 1명이고 리뷰가 있는 주문, 지연은 배송 지표 대상 주문만)
+SELLER_LATE_SQL = """
+WITH single_seller AS (
+    SELECT order_id, MIN(seller_id) AS seller_id
+    FROM order_items
+    GROUP BY order_id
+    HAVING COUNT(DISTINCT seller_id) = 1
+)
+SELECT s.seller_id, SUM(o.exclude_delivery_metrics = 0 AND o.is_late = 1) AS n_late
+FROM single_seller s
+JOIN v_orders o ON o.order_id = s.order_id
+JOIN v_order_reviews r ON r.order_id = s.order_id
+GROUP BY s.seller_id
+"""
+
+# 고객 주별 건수 (q4_03과 같은 대상: 리뷰가 있는 주문)
+STATE_SQL = """
+SELECT
+    o.customer_state,
+    COUNT(*)                                                      AS n_reviewed_orders,
+    SUM(r.review_score <= 2)                                      AS n_low,
+    SUM(o.exclude_delivery_metrics = 0)                           AS n_delivery_base,
+    SUM(o.exclude_delivery_metrics = 0 AND o.is_late = 1)         AS n_late,
+    SUM(COALESCE(GREATEST(r.NOT_RECEIVED, r.DELAY), 0))           AS n_logistics
+FROM v_orders o
+JOIN v_order_reviews r ON r.order_id = o.order_id
+GROUP BY o.customer_state
+ORDER BY n_reviewed_orders DESC
+"""
+
+
 def run_sql(engine, sql: str) -> pd.DataFrame:
     """SQL을 실행해 DataFrame으로 돌려준다(DECIMAL은 float로)."""
     df = pd.read_sql(text(sql), engine)
@@ -137,23 +171,37 @@ def build_seller_summary(engine) -> pd.DataFrame:
     df, _ = score_sellers(df, "n_low", prefix="low_rate_")
     overall = df["n_seller_ctrl"].sum() / df["n_orders"].sum()
     df["is_watch_list"] = watch_list_mask(df, "n_seller_ctrl", "seller_ctrl_rate_adj").astype(int)
-    df["excess_complaints"] = df["n_seller_ctrl"] - df["n_orders"] * overall
+    # 초과 불만 건수는 리포트와 같게 소수 1자리로 저장한다(정렬은 반올림 전 값과 같음)
+    df["excess_complaints"] = (df["n_seller_ctrl"] - df["n_orders"] * overall).round(1)
     type_counts = df[[f"n_{t}" for t in SELLER_CONTROLLABLE]]
     df["main_complaint_type"] = type_counts.idxmax(axis=1).str[2:].map(LABEL_KO).where(df["n_seller_ctrl"] > 0)
     df["main_complaint_share"] = (type_counts.max(axis=1) / df["n_seller_ctrl"]).where(df["n_seller_ctrl"] > 0)
     df["meets_min_orders"] = (df["n_orders"] >= 30).astype(int)
+    # 지연율: SQL AVG(소수 4자리) 대신 정확한 지연 건수 ÷ 배송 지표 대상 주문 수
+    late = run_sql(engine, SELLER_LATE_SQL).set_index("seller_id")["n_late"]
+    df["n_late"] = df["seller_id"].map(late).astype("Int64")
+    df["late_rate"] = (df["n_late"] / df["n_delivery_base"]).where(df["n_delivery_base"] > 0).astype(float)
+    for c in ["n_seller_ctrl", "n_low", "n_delivery_base"]:  # 건수는 정수로 (SUM 결과가 DECIMAL이라 실수로 읽힘)
+        df[c] = df[c].astype("Int64")
     return df[["seller_id", "seller_state", "n_orders", "meets_min_orders", "n_seller_ctrl", "seller_ctrl_rate_raw",
                "seller_ctrl_rate_adj", "excess_complaints", "n_low", "low_rate_raw", "low_rate_adj", "n_delivery_base",
-               "late_rate", "is_watch_list", "main_complaint_type", "main_complaint_share"]]
+               "n_late", "late_rate", "is_watch_list", "main_complaint_type", "main_complaint_share"]]
 
 
 def build_state_summary(engine) -> pd.DataFrame:
-    """고객 주별 주문 수, 지연율, 1~2점 비율, 물류 불만 비율 (리뷰 있는 주문 기준, Q4와 같음)."""
-    df = run_sql(engine, (SQL_DIR / "q4_03_customer_state.sql").read_text(encoding="utf-8"))
-    df["n_late"] = (df["late_rate"] * df["n_delivery_base"]).round().astype(int)
-    df["meets_min_orders"] = (df["n_orders"] >= 300).astype(int)
-    return df.rename(columns={"n_orders": "n_reviewed_orders"})[
-        ["customer_state", "n_reviewed_orders", "meets_min_orders", "n_delivery_base", "n_late", "late_rate", "low_rate", "logistics_rate"]]
+    """고객 주별 주문 수, 지연율, 1~2점 비율, 물류 불만 비율 (리뷰 있는 주문 기준, q4_03과 같은 대상).
+
+    비율은 건수 ÷ 분모로 계산한다(SQL AVG의 소수 4자리 반올림을 피하고, 건수와 비율이 서로 맞게).
+    """
+    df = run_sql(engine, STATE_SQL)
+    for c in ["n_reviewed_orders", "n_low", "n_delivery_base", "n_late", "n_logistics"]:
+        df[c] = df[c].astype(int)
+    df["late_rate"] = df["n_late"] / df["n_delivery_base"]
+    df["low_rate"] = df["n_low"] / df["n_reviewed_orders"]
+    df["logistics_rate"] = df["n_logistics"] / df["n_reviewed_orders"]
+    df["meets_min_orders"] = (df["n_reviewed_orders"] >= 300).astype(int)
+    return df[["customer_state", "n_reviewed_orders", "meets_min_orders", "n_delivery_base", "n_late", "late_rate",
+               "n_low", "low_rate", "n_logistics", "logistics_rate"]]
 
 
 def build_q5_scenarios() -> pd.DataFrame:
@@ -178,7 +226,7 @@ def build_q5_scenarios() -> pd.DataFrame:
         "reduction_low": single["범위 하한"],
         "reduction_high": single["범위 상한"],
         "share_of_low": single["1~2점 대비 비율"],
-        "fixed_orders": single["개선 주문 수(기대)"],
+        "fixed_orders": single["개선 주문 수(기대)"].round(1),  # 기대값이라 소수가 나올 수 있음
         "priority": single["parent"].map(prio["우선순위"]),
         "owner": single["parent"].map(prio["개선 주체"]),
         "feasibility": single["parent"].map(prio["실행 가능성"]),
@@ -197,6 +245,7 @@ def build_q5_scenarios() -> pd.DataFrame:
                            "service_complaints_max": e["응대 불만 최대치"]}])
     out = pd.concat([rows, bundle_rows, e_row], ignore_index=True)
     out["priority"] = out["priority"].astype("Int64")
+    out["service_complaints_max"] = out["service_complaints_max"].astype("Int64")
     out["baseline_low_reviews"] = total_low
     return out
 

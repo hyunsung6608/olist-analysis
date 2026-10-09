@@ -88,6 +88,9 @@ flowchart LR
 ```text
 olist-analysis/
 ├── run_pipeline.py          # 품질 검사 → 스키마 → 적재 → 뷰 → 검증
+├── requirements.txt         # 버전 고정 (Python 3.13)
+├── .env.example             # 환경 변수 항목 (복사해서 .env로 사용)
+├── CLAUDE.md                # AI(Claude Code) 작업 지침
 ├── data/
 │   ├── raw/                 # Kaggle 원본 CSV (커밋하지 않음, 직접 내려받기)
 │   ├── labels/              # 직접 라벨링한 파일럿·검증 리뷰
@@ -100,7 +103,8 @@ olist-analysis/
 ├── src/
 │   ├── etl/                 # 품질 검사, 적재, 검증
 │   ├── llm/                 # 분류 체계, 프롬프트, 분류·평가·후처리
-│   └── analysis/            # Tableau 내보내기, 공통 매핑
+│   │                        #   (check_api.py, try_prompt.py는 개발 중 API 연결·프롬프트 시험용)
+│   └── analysis/            # Tableau 내보내기, 공통 매핑, 판매자 보정 모듈
 ├── notebooks/               # 01~07 탐색·분석 노트북
 ├── reports/
 │   ├── analysis/            # Q1~Q5 리포트
@@ -111,37 +115,54 @@ olist-analysis/
 
 ## 재현 방법
 
+필요한 것: Python 3.13, MySQL 8.0. 아래 명령은 Windows(PowerShell) 기준이다. macOS·Linux는 `py -3.13` 대신 `python3.13`, `venv\Scripts\activate` 대신 `source venv/bin/activate`, `copy` 대신 `cp`를 쓴다.
+
 **1. 환경 설정**
 
-```bash
-python -m venv venv
-venv\Scripts\activate            # macOS·Linux: source venv/bin/activate
+```powershell
+py -3.13 -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 python -m ipykernel install --user --name olist-venv --display-name "Python (olist-venv)"
 ```
 
-- MySQL 8.0에 빈 DB와 사용자를 만든다(문자 집합 utf8mb4).
-- 프로젝트 루트에 `.env`를 만든다.
+**2. MySQL DB와 전용 사용자 만들기** (MySQL에 관리자 계정으로 접속해 실행)
+
+```sql
+CREATE DATABASE olist CHARACTER SET utf8mb4;
+CREATE USER 'olist_user'@'localhost' IDENTIFIED BY '원하는 비밀번호';
+GRANT ALL PRIVILEGES ON olist.* TO 'olist_user'@'localhost';
+```
+
+**3. 환경 변수 설정**
+
+```powershell
+copy .env.example .env
+```
+
+`.env`에 아래 항목을 채운다.
 
 ```text
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_USER=...
-MYSQL_PASSWORD=...
-MYSQL_DB=...
+MYSQL_USER=olist_user
+MYSQL_PASSWORD=원하는 비밀번호
+MYSQL_DB=olist
 GEMINI_API_KEY=...      # LLM 분류를 다시 돌릴 때만 필요
-GEMINI_MODEL=...        # 예: gemini-3.5-flash-lite
+GEMINI_MODEL=...        # 예: gemini-3.5-flash-lite (LLM 분류를 다시 돌릴 때만 필요)
 ```
 
-- Kaggle에서 데이터셋을 내려받아 CSV 9개를 `data/raw/`에 넣는다.
+**4. 원본 데이터 넣기**
 
-**2. 파이프라인 실행**
+Kaggle에서 데이터셋을 내려받아 CSV 9개를 `data/raw/`에 넣는다.
+
+**5. 파이프라인 실행**
 
 ```bash
 python run_pipeline.py --reset   # 테이블을 새로 만들고 품질 검사부터 검증까지 실행
 ```
 
-**3. LLM 분류 (선택)**
+**6. LLM 분류 (선택)**
 
 분류 결과 CSV(`data/results/review_complaint_labels.csv`)가 레포에 들어 있어서 **다시 돌리지 않아도 된다.** 다시 분류하려면 아래를 실행한다(Gemini API 키 필요, 리뷰 14,286건에 약 480회 호출).
 
@@ -150,7 +171,7 @@ python src/llm/classify_reviews.py --input all --run-name full_v2_post3 --max-ca
 python src/llm/export_labels.py --run-name full_v2_post3
 ```
 
-**4. 분석 노트북** (커널: Python (olist-venv))
+**7. 분석 노트북** (커널: Python (olist-venv))
 
 `01_data_overview` → `02_review_exploration` → `03_q1` → `04_q2` → `05_q3` → `06_q4` → `07_q5` 순서로 실행한다. Tableau용 CSV를 다시 만들려면 `07_q5`를 실행한 뒤 `python src/analysis/export_tableau.py`를 실행한다.
 
@@ -162,6 +183,12 @@ python src/llm/export_labels.py --run-name full_v2_post3
 - **여러 판매자 주문의 지연은 과소 추정됐을 수 있다.** 수령일이 먼저 도착한 상품 기준으로 기록됐을 가능성이 있다(가설).
 - **관리 대상 판매자를 비율 기준으로만 골랐다.** 그래서 주문이 많아 초과 불만 건수가 큰 판매자를 놓칠 수 있다(예: 초과 불만 68.0건인데 제외된 판매자). 다음 단계로 초과 불만 건수 기준을 함께 쓰는 방안을 검토한다.
 - **선제 안내 효과는 추정하지 않았다.** 배송 문제가 생겼을 때 먼저 알리는 조치(응대 불만 최대 818건 대상)는 A/B 테스트로 효과를 확인해야 한다.
+
+## AI 협업 방식
+
+- 코드 작성과 반복 작업은 Claude Code와 함께 진행했고, 작업 지침은 [`CLAUDE.md`](CLAUDE.md)에 정리했다.
+- 분석 질문 설계, 분류 체계 판정 기준, 검증 정답 라벨링, 결과 해석과 의사결정은 작성자가 담당했다.
+- AI가 만든 결과는 사람이 만든 정답지, 운영 데이터와의 교차 검증, 출처 대조로 확인했다.
 
 ## 데이터 출처
 

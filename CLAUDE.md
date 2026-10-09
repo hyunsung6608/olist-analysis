@@ -16,15 +16,23 @@ LLM으로 리뷰를 불만 유형별로 분류하고, 배송·판매자·재구�
 원본 CSV → 데이터 품질 검사 → MySQL 적재 → SQL 운영 분석 → LLM 리뷰 분류 → 통계 검정·코호트 분석 → Tableau → 비즈니스 제안
 
 ## 폴더 구조
+- run_pipeline.py: 품질 검사 → 스키마 → 적재 → 분석 뷰 → 적재 검증을 순서대로 실행 (LLM 분류는 포함하지 않음)
 - data/raw: Kaggle 원본 CSV (읽기 전용, 절대 수정·삭제 금지)
-- data/processed: 정제된 중간 데이터
+- data/processed: 정제된 중간 데이터, LLM 분류 JSONL (커밋하지 않음)
 - data/labels: 직접 라벨링한 리뷰 샘플 (LLM 검증용)
+- data/results: LLM 분류 최종 결과 CSV (MySQL 적재 입력, 커밋함)
+- data/tableau: Tableau 대시보드용 CSV (커밋함)
 - sql/schema: 테이블 생성, 키, 인덱스
-- sql/analysis: 분석 쿼리 (01_, 02_ 처럼 번호 접두사)
-- src/etl: 추출, 품질 검사, 적재
-- src/llm: 리뷰 분류 파이프라인, 프롬프트
-- src/analysis: 통계 검정, 코호트 분석
-- notebooks: 탐색적 분석, 시각화
+- sql/views: 분석용 뷰 (01_, 02_ 처럼 번호 접두사, 파일 이름 순서로 생성)
+- sql/analysis: 분석 쿼리 (q1_01_처럼 질문 번호_순번)
+- src/etl: 품질 검사, 스키마 생성, 적재, 뷰 생성, 적재 검증
+- src/llm: 리뷰 분류 파이프라인, 프롬프트, 분류 체계, 평가·후처리
+- src/analysis: Tableau 내보내기·공통 매핑·판매자 보정 모듈 (통계 검정·코호트 분석은 notebooks에 있음)
+- notebooks: 탐색적 분석, Q1~Q5 분석(통계 검정·회귀·시뮬레이션), 시각화
+- reports/analysis: Q1~Q5 분석 리포트
+- reports/llm_eval: LLM 분류 평가 리포트
+- reports/figures: 차트, 대시보드 이미지
+- dashboards: Tableau 통합 문서(.twbx)와 대시보드 설계서
 
 ## 기술 스택
 Python(venv), pandas, MySQL(SQLAlchemy + PyMySQL), Gemini API(google-genai), scipy/statsmodels, scikit-learn, Tableau

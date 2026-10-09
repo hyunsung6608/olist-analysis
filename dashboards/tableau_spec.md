@@ -182,7 +182,7 @@ IF [customer_state] = "SP" OR [customer_state] = "RJ" OR [customer_state] = "MG"
 | 1-1 KPI | complaint_labels_long | - | COUNTD(review_id), [물류 주 원인 비율], [미수령 비율] | 숫자 타일 3개 | 주 (동작) |
 | 1-2 유형별 비중 | complaint_labels_long | label_ko (label_order 정렬) | [다중 라벨 비율] `#9ecae1`, [주 원인 비율] `#2171b5` (Measure Names로 나란히) | 가로 막대 | 주 (동작) |
 | 1-3 개선 주체별 비중 | complaint_labels_long | owner | [다중 라벨 비율], [주 원인 비율] | 세로 막대, 주체 고정 색 | 주 (동작) |
-| 1-4 월별 주체 비중 추이 | complaint_labels_long | order_month, owner, [물류 강조](크기) | [주 원인 비율] | 선 그래프, 물류 선만 굵게 | [표본 충분] = 참, 주 (동작) |
+| 1-4 월별 주체 비중 추이 | complaint_labels_long | order_month, owner, `[물류 강조]` → 크기 | [주 원인 비율] | 선 그래프, 물류 선만 굵게 | [표본 충분] = 참, 주 (동작) |
 | 1-5 고객 주별 물류 비중 | complaint_labels_long | customer_state (지도) | [물류 주 원인 비율] | 채워진 지도 | [주 리뷰 충분] = 참 |
 
 - 1-4는 주문 2016-09, 2018-09, 2018-10(리뷰 100건 미만)이 빠진 21개월만 보인다.
@@ -222,7 +222,7 @@ IF [customer_state] = "SP" OR [customer_state] = "RJ" OR [customer_state] = "MG"
 | 3-2 개선안별 연간 감소 | q5_scenarios | intervention (priority 정렬), [시나리오 이름] | reduction_mean (막대), reduction_low~high (오차선) | 가로 막대, 시나리오별 색 | row_type = 단독 |
 | 3-3 우선순위 표 | q5_scenarios | priority, intervention, owner, feasibility, evidence, reason | - (감소 건수 열은 공간 문제로 빼고 3-2에서 보여 줌) | 텍스트 표 | row_type ∈ {단독, 보완}, scenario_level = 0.5 또는 NULL |
 | 3-4 관리 대상 판매자 | seller_summary | [판매자], seller_state, main_complaint_type | n_orders, seller_ctrl_rate_raw, seller_ctrl_rate_adj, excess_complaints, late_rate | 텍스트 표 (excess_complaints 내림차순, 상위 20) | **is_watch_list = 1 (컨텍스트)**, 상위 20 |
-| 3-5 주별 지연 건수 | state_summary | customer_state, [집중 대상 주](색) | n_late | 가로 막대 (내림차순, 상위 10, SP·RJ·MG 강조) | **meets_min_orders = 1 (컨텍스트)**, 상위 10 |
+| 3-5 주별 지연 건수 | state_summary | customer_state, `[집중 대상 주]` → 색 | n_late | 가로 막대 (내림차순, 상위 10, SP·RJ·MG 강조) | **meets_min_orders = 1 (컨텍스트)**, 상위 10 |
 
 **대시보드 동작**
 - **하이라이트**: 3-3 우선순위 표에서 개선안을 클릭하면 3-2에서 같은 개선안이 강조된다(`intervention` 기준, 대상 3-2만).
